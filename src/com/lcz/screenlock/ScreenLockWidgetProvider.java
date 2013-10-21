@@ -1,7 +1,6 @@
 package com.lcz.screenlock;
 
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;
 import android.appwidget.AppWidgetManager;
