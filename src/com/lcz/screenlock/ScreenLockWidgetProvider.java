@@ -17,18 +17,24 @@ public class ScreenLockWidgetProvider extends AppWidgetProvider{
 	static boolean DBG = true;
 	static String TAG = "ScreenLock-WidgetProvider";
 	
-	private Context mContext;
+	private static Context mContext;
+	private static AppWidgetManager mAppWidgetManager;
+	int[] mAppWidgetIds;
 	public static final String LOCKSCREEN_FLAG = "screenlock_flag";
 	public static final boolean LOCKSCREEN_NOW = true;
 	public static final String LOCKSCREEN_ACTION = "com.lcz.screenlock.LOCKNOW";
+	public static final String REFRESHWIDGET_ACTION = "com.lcz.screenlock.REFRESHWIDGET";
+	public static final String REFRESHWIDGET_FLAG = "refreshwidget_flag";
+	public static final boolean WIDGET_BTN_DISABLE = false;
+	public static final boolean WIDGET_BTN_ENABLE = true;
 
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
 		// TODO Auto-generated method stub
 		mContext = context;
-		
-
+		mAppWidgetManager = appWidgetManager;
+		mAppWidgetIds = appWidgetIds;
 		// 获取设备管理服务
 		DevicePolicyManager policyManager = (DevicePolicyManager) mContext.getSystemService(Context.DEVICE_POLICY_SERVICE);
 
@@ -36,6 +42,33 @@ public class ScreenLockWidgetProvider extends AppWidgetProvider{
 		ComponentName componentName = new ComponentName(mContext, AdminReceiver.class);
 		boolean isActive = policyManager.isAdminActive(componentName);
 		
+		refreshWidget(context, appWidgetManager, mAppWidgetIds, isActive);
+		
+	}
+	
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		// TODO Auto-generated method stub
+		super.onReceive(context, intent);
+		mContext = context;
+		String action = intent.getAction();
+		if(DBG)Log.d(TAG, "onReceive..."+action);
+		if(action.equals(LOCKSCREEN_ACTION)){
+			lockScreenNow(context);
+		}else if(action.equals(REFRESHWIDGET_ACTION)){
+			boolean isActive = intent.getBooleanExtra(REFRESHWIDGET_FLAG, false);
+			refreshWidget(mContext, mAppWidgetManager, mAppWidgetIds, isActive);
+		}
+	}
+	
+	void refreshWidget(Context context, AppWidgetManager appWidgetManager,
+			int[] appWidgetIds,boolean isActive){
+		if(appWidgetManager == null){
+			mAppWidgetManager = AppWidgetManager.getInstance(mContext);
+		}
+		if(appWidgetIds == null){
+			appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, ScreenLockWidgetProvider.class));
+		}
 		final int N = appWidgetIds.length;
 		// Perform this loop procedure for each App Widget that belongs to this
 		// provider
@@ -68,16 +101,6 @@ public class ScreenLockWidgetProvider extends AppWidgetProvider{
 		}
 	}
 	
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		// TODO Auto-generated method stub
-		super.onReceive(context, intent);
-		if(DBG)Log.d(TAG, "onReceive...");
-		if(intent.getAction().equals(LOCKSCREEN_ACTION)){
-			lockScreenNow(context);
-		}
-	}
-	
 	private void lockScreenNow(Context context) {
 		// 获取设备管理服务
 		DevicePolicyManager policyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
@@ -90,4 +113,5 @@ public class ScreenLockWidgetProvider extends AppWidgetProvider{
 			Toast.makeText(context, context.getResources().getString(R.string.toast_app_no_active), Toast.LENGTH_LONG).show();
 		}
 	}
+	
 }

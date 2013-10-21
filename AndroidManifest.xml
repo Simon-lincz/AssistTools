@@ -35,6 +35,7 @@
 
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED"/>
             </intent-filter>
         </receiver>
         
@@ -42,6 +43,7 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.lcz.screenlock.LOCKNOW"/>
+                <action android:name="com.lcz.screenlock.REFRESHWIDGET"/>
             </intent-filter>
 
             <meta-data
