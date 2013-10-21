@@ -26,8 +26,16 @@ public class ScreenLockWidgetProvider extends AppWidgetProvider{
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
 		// TODO Auto-generated method stub
-		if(DBG)Log.d(TAG, "onUpdate...");
 		mContext = context;
+		
+
+		// 获取设备管理服务
+		DevicePolicyManager policyManager = (DevicePolicyManager) mContext.getSystemService(Context.DEVICE_POLICY_SERVICE);
+
+		// AdminReceiver 继承自 DeviceAdminReceiver
+		ComponentName componentName = new ComponentName(mContext, AdminReceiver.class);
+		boolean isActive = policyManager.isAdminActive(componentName);
+		
 		final int N = appWidgetIds.length;
 		// Perform this loop procedure for each App Widget that belongs to this
 		// provider
@@ -46,12 +54,13 @@ public class ScreenLockWidgetProvider extends AppWidgetProvider{
 			// Get the layout for the App Widget and attach an on-click listener
 			// to the button
 			// 用于监听widget上面的一个view的click
-			RemoteViews views = new RemoteViews(context.getPackageName(),
-					R.layout.screenlock_widgetlayout);
+			RemoteViews views;
+			if(isActive){
+				 views = new RemoteViews(mContext.getPackageName(),	R.layout.screenlock_widgetlayout);
+			}else{
+				 views = new RemoteViews(mContext.getPackageName(),	R.layout.test_screenlock_widgetlayout);
+			}
 			views.setOnClickPendingIntent(R.id.screenlock_widget_btn_id, pendingIntent);
-			
-//			Intent intent2 = new Intent("com.lcz.screenlock.LOCKNOW");
-//			views.setOnClickFillInIntent(R.id.screenlock_widget_btn_id, intent2);
 			
 			// Tell the AppWidgetManager to perform an update on the current app
 			// widget

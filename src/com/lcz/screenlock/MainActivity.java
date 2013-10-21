@@ -1,11 +1,14 @@
 package com.lcz.screenlock;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;
+import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
+import android.widget.RemoteViews;
 import android.widget.Switch;
 
 public class MainActivity extends Activity implements OnClickListener,OnCheckedChangeListener{
@@ -22,6 +26,8 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 	
 	private DevicePolicyManager policyManager;
 	private ComponentName componentName;
+	private AppWidgetManager appWidgetManager;
+	ComponentName widgetprovider;
 	ImageButton imbtn_screenlock;
 	Switch sw_DeviceAdminActive;
 	
@@ -38,6 +44,9 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		// AdminReceiver ºÃ≥–◊‘ DeviceAdminReceiver
 		componentName = new ComponentName(this, AdminReceiver.class);
 		
+		appWidgetManager = AppWidgetManager.getInstance(this);
+		widgetprovider = new ComponentName(this, ScreenLockWidgetProvider.class);
+		
 		sw_DeviceAdminActive = (Switch) findViewById(R.id.screenlock_switch_id);
 		sw_DeviceAdminActive.setOnCheckedChangeListener(this);
 		
@@ -46,10 +55,6 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		
 //		checkAdminActive(true);
 		
-		
-	/*	View v = findViewById(R.id.screenlock_im);
-		ScaleDrawable drawable = (ScaleDrawable) ((ImageView) v).getDrawable();
-		drawable.setLevel(10000);*/
 	}
 
 	
@@ -61,6 +66,7 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		if(intent.getBooleanExtra(ScreenLockWidgetProvider.LOCKSCREEN_FLAG, false)){
 			lockScreenNow();
 		}
+		
 		if(DBG)Log.d(TAG, "onStart");
 		super.onStart();
 	}
@@ -103,6 +109,18 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		}else{
 			imbtn_screenlock.setBackgroundResource(R.drawable.grayround);
 		}
+		RemoteViews views;
+		if(working){
+			 views = new RemoteViews(this.getPackageName(),
+				R.layout.screenlock_widgetlayout);
+		}else{
+			 views = new RemoteViews(this.getPackageName(),
+					R.layout.test_screenlock_widgetlayout);
+		}
+		Intent intent2 = new Intent(ScreenLockWidgetProvider.LOCKSCREEN_ACTION);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent2, 0);
+		views.setOnClickPendingIntent(R.id.screenlock_widget_btn_id, pendingIntent);
+		appWidgetManager.updateAppWidget(appWidgetManager.getAppWidgetIds(widgetprovider), views);
 	}
 	
 	//===============================================================================================
@@ -141,7 +159,6 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		// √Ë ˆ(additional explanation)
 		intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,"------ ∆‰À˚√Ë ˆ ------");
 		startActivityForResult(intent, 0);
-		
 	}
 	
 	private void removeManage() {
