@@ -87,7 +87,7 @@ public class ScreenLockWidgetProvider extends AppWidgetProvider{
 		if(isActive){
 			policyManager.lockNow();
 		}else{
-			Toast.makeText(context, "no active the app.", Toast.LENGTH_LONG).show();
+			Toast.makeText(context, context.getResources().getString(R.string.toast_app_no_active), Toast.LENGTH_LONG).show();
 		}
 	}
 }

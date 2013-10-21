@@ -1,6 +1,8 @@
 package com.lcz.screenlock;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;
 import android.appwidget.AppWidgetManager;
@@ -11,6 +13,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
@@ -157,7 +160,7 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		// 权限列表
 		intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
 		// 描述(additional explanation)
-		intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,"------ 其他描述 ------");
+		intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,this.getResources().getString(R.string.device_admin_explanation));
 		startActivityForResult(intent, 0);
 	}
 	
@@ -165,7 +168,7 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		if(policyManager != null && componentName != null){
 			if(DBG)Log.d(TAG, "removeManage");
 			policyManager.removeActiveAdmin(componentName);
-			refreshView(false);
+			checkAdminActive(false);
 		}
 	}
 	
@@ -195,4 +198,21 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		return true;
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case R.id.action_about:
+			AlertDialog dialog;
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.action_about_content).setCancelable(true);
+			dialog = builder.create();
+			dialog.show();
+			break;
+
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

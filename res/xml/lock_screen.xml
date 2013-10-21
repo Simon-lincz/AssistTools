@@ -6,8 +6,8 @@
         <force-lock />
         <!-- 清除所有数据（恢复出厂设置） 
         <wipe-data />-->
-        <!-- 重置密码-->
-        <reset-password /> 
+        <!-- 重置密码
+        <reset-password /> -->
         <!-- 限制密码选择 
         <limit-password />-->
         <!-- 监控登录尝试
