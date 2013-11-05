@@ -4,7 +4,7 @@
     <string name="device_admin_name">ScreenLock-DA</string>
     <string name="device_admin_description">ScreenLock-description</string>
     <string name="device_admin_explanation">Activate the APP,or app can\'t work.</string>
-    <string name="device_avtive_btn_title">APP active status：</string>
+    <string name="device_avtive_btn_title">APP active status</string>
     <string name="device_avtive_btn_ok">Active</string>
     <string name="device_avtive_btn_cancel">Inactive</string>
     <string name="toast_app_no_active">Didn\'t activate the app.</string>

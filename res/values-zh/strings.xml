@@ -4,7 +4,7 @@
     <string name="device_admin_name">锁屏工具</string>
     <string name="device_admin_description">桌面锁屏工具</string>
     <string name="device_admin_explanation">请求系统授权，否则无法锁屏。</string>
-    <string name="device_avtive_btn_title">应用激活状态：</string>
+    <string name="device_avtive_btn_title">应用激活状态</string>
     <string name="device_avtive_btn_ok">激活</string>
     <string name="device_avtive_btn_cancel">未激活</string>
     <string name="toast_app_no_active">应用未激活</string>

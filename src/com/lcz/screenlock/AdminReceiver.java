@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class AdminReceiver extends DeviceAdminReceiver{
 
-	static boolean DBG = true;
+	static boolean DBG = false;
 	static String TAG = "ScreenLock-AdminReceiver";
 	
 	public AdminReceiver() {

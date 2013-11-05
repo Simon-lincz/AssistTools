@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 public class ScreenLockWidgetProvider extends AppWidgetProvider{
 
-	static boolean DBG = true;
+	static boolean DBG = false;
 	static String TAG = "ScreenLock-WidgetProvider";
 	
 	private static Context mContext;
@@ -65,9 +65,11 @@ public class ScreenLockWidgetProvider extends AppWidgetProvider{
 			int[] appWidgetIds,boolean isActive){
 		if(appWidgetManager == null){
 			mAppWidgetManager = AppWidgetManager.getInstance(mContext);
+			appWidgetManager = mAppWidgetManager;
 		}
 		if(appWidgetIds == null){
-			appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, ScreenLockWidgetProvider.class));
+			mAppWidgetIds = mAppWidgetManager.getAppWidgetIds(new ComponentName(mContext, ScreenLockWidgetProvider.class));
+			appWidgetIds = mAppWidgetIds;
 		}
 		final int N = appWidgetIds.length;
 		// Perform this loop procedure for each App Widget that belongs to this
