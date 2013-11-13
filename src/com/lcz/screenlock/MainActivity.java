@@ -7,6 +7,8 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,7 +32,20 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 	private ComponentName componentName;
 	ImageButton imbtn_screenlock;
 	ToggleButton tb_DeviceAdminActive;
+	ToggleButton tb_PhoneCallLockActive;
 //	Switch sw_DeviceAdminActive;
+	
+	SharedPreferences mSharedPreferences;
+	public static final String SharedPreferences_Name = "config";
+	public static final String CONFIG_FIRST_RUN = "app_first_run";
+	public static final String CONFIG_PHONE_CALL_SCREENLOCK = "lockscreen_when_makecall";
+	public static final String CONFIG_PHONE_CALL_SCREENLOCK_TIMEOUT = "lockscreen_timeout_when_makecall";
+	public static final String CONFIG_SHOW_NOTIFICATION_SWITCH = "lockscreen_when_makecall";
+	public static final String CONFIG_SHOW_WHITE_DOT = "show_white_dot";
+	
+	public static final boolean CONFIG_YES = true;
+	public static final boolean CONFIG_NO = false;
+	public static final int CONFIG_TIMEOUT = 3000;
 	
 	
 	boolean isActive = false;
@@ -56,8 +71,25 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		//android.intent.action.ASSIST »½ÐÑ Google Now
 //		checkAdminActive(true);
 		
+		tb_PhoneCallLockActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_phone_id);
+		tb_PhoneCallLockActive.setOnCheckedChangeListener(this);
+		
+		checkSharePrefence();
 	}
 
+	void checkSharePrefence(){
+		mSharedPreferences = getSharedPreferences(SharedPreferences_Name, Context.MODE_PRIVATE);
+		if(mSharedPreferences.getBoolean(CONFIG_FIRST_RUN, CONFIG_YES)){
+			Editor editor = mSharedPreferences.edit();
+			editor.putBoolean(CONFIG_FIRST_RUN, CONFIG_NO);
+			editor.putBoolean(CONFIG_PHONE_CALL_SCREENLOCK,CONFIG_YES);
+			editor.putBoolean(CONFIG_SHOW_NOTIFICATION_SWITCH, CONFIG_YES);
+			editor.putBoolean(CONFIG_SHOW_WHITE_DOT, CONFIG_YES);
+			editor.putInt(CONFIG_PHONE_CALL_SCREENLOCK_TIMEOUT, CONFIG_TIMEOUT);
+			editor.commit();
+		}
+	}
+	
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setSystemUiVisibility(View rootView) {
             rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -89,7 +121,15 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 				removeManage();
 			}
 			break;
-
+		case R.id.screenlock_togglebtn_phone_id:
+			Editor editor = mSharedPreferences.edit();
+			if(ischeck){
+				editor.putBoolean(CONFIG_PHONE_CALL_SCREENLOCK,CONFIG_YES);
+			}else{
+				editor.putBoolean(CONFIG_PHONE_CALL_SCREENLOCK,CONFIG_NO);
+			}
+			editor.commit();
+			break;
 		default:
 			break;
 		}
@@ -202,6 +242,7 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		// TODO Auto-generated method stub
+		menu.add(0, 0, 0, getResources().getString(R.string.action_about_content));
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 	

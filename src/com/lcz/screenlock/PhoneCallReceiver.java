@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.telephony.TelephonyManager;
@@ -25,6 +26,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 	DevicePolicyManager mDevicePolicyManager;
 	// AdminReceiver ¼Ì³Ð×Ô DeviceAdminReceiver
 	ComponentName mComponentName;
+	
+	SharedPreferences mSharedPreferences;
 	
 	static final int MSG_BASE = 0;
 	static final int MSG_LOCKNOW = MSG_BASE + 1;
@@ -66,13 +69,18 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 			mComponentName = new ComponentName(context, AdminReceiver.class);
 		}
 		
+		// AdminReceiver ¼Ì³Ð×Ô DeviceAdminReceiver
+		if(mSharedPreferences == null){
+			mSharedPreferences = context.getSharedPreferences(MainActivity.SharedPreferences_Name, Context.MODE_PRIVATE);
+		}
+		
 		if(DBG)Log.d(TAG, "mTelephonyManager.getCallState:" + mTelephonyManager.getCallState());
 		switch (mTelephonyManager.getCallState()) {
 		case TelephonyManager.CALL_STATE_RINGING:
 
 			break;
 		case TelephonyManager.CALL_STATE_OFFHOOK:
-			mHandler.sendEmptyMessageDelayed(MSG_LOCKNOW, 3000);
+			if(mSharedPreferences.getBoolean(MainActivity.CONFIG_PHONE_CALL_SCREENLOCK, false))mHandler.sendEmptyMessageDelayed(MSG_LOCKNOW, 3000);
 			break;
 		case TelephonyManager.CALL_STATE_IDLE:
 			
