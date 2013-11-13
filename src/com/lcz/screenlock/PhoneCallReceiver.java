@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 public class PhoneCallReceiver extends BroadcastReceiver {
 
-	static boolean DBG = true;
+	static boolean DBG = false;
 	static String TAG = "ScreenLock-PhoneCallReceiver";
 	
 	Context mContext;
