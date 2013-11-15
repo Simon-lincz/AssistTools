@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/control_board_bg"
+    android:orientation="vertical" >
+
+    <!--
+         button position:
+    	 0   1   2
+    	 3   4   5
+    	 6   7   8
+    	 ==========
+    	 WN  N   EN
+    	 W   C   E
+    	 WS  S   ES
+    -->
+
+    <ImageButton
+        android:id="@+id/control_board_centerbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/ic_control_board_center_btn_bg" />
+
+    <!-- E:east-S:south-W:west-N:north -->
+
+
+    <!-- 西北 -->
+
+    <ImageButton
+        android:id="@+id/control_board_WNbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/control_board_centerbtn"
+        android:layout_marginBottom="@dimen/control_board_icon_offset"
+        android:layout_marginRight="@dimen/control_board_icon_offset"
+        android:layout_toLeftOf="@+id/control_board_centerbtn"
+        android:background="@drawable/ic_control_board_add" />
+
+    <!-- 北 -->
+
+    <ImageButton
+        android:id="@+id/control_board_Nbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/control_board_centerbtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/control_board_icon_offset"
+        android:background="@drawable/ic_control_board_add" />
+
+    <!-- 东北 -->
+
+    <ImageButton
+        android:id="@+id/control_board_ENbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/control_board_centerbtn"
+        android:layout_marginBottom="@dimen/control_board_icon_offset"
+        android:layout_marginLeft="@dimen/control_board_icon_offset"
+        android:layout_toRightOf="@+id/control_board_centerbtn"
+        android:background="@drawable/ic_control_board_add" />
+
+    <!-- 西 -->
+
+    <ImageButton
+        android:id="@+id/control_board_Wbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/control_board_icon_offset"
+        android:layout_toLeftOf="@+id/control_board_centerbtn"
+        android:background="@drawable/ic_control_board_add" />
+
+    <!-- 东 -->
+
+    <ImageButton
+        android:id="@+id/control_board_Ebtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/control_board_icon_offset"
+        android:layout_toRightOf="@+id/control_board_centerbtn"
+        android:background="@drawable/ic_control_board_add" />
+
+    <!-- 西南 -->
+
+    <ImageButton
+        android:id="@+id/control_board_WSbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/control_board_centerbtn"
+        android:layout_marginRight="@dimen/control_board_icon_offset"
+        android:layout_marginTop="@dimen/control_board_icon_offset"
+        android:layout_toLeftOf="@+id/control_board_centerbtn"
+        android:background="@drawable/ic_control_board_add" />
+
+    <!-- 南 -->
+
+    <ImageButton
+        android:id="@+id/control_board_Sbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/control_board_centerbtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/control_board_icon_offset"
+        android:background="@drawable/ic_control_board_add" />
+
+    <!-- 东南 -->
+
+    <ImageButton
+        android:id="@+id/control_board_ESbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/control_board_centerbtn"
+        android:layout_marginLeft="@dimen/control_board_icon_offset"
+        android:layout_marginTop="@dimen/control_board_icon_offset"
+        android:layout_toRightOf="@+id/control_board_centerbtn"
+        android:background="@drawable/ic_control_board_add" />
+
+</RelativeLayout>

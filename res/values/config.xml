@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<integer name="control_board_width">400</integer>
+	<integer name="control_board_height">400</integer>
+	<!-- control_board_bg_alpha:[0-255] 0:透明 -->
+	<integer name="control_board_bg_alpha">175</integer>
+</resources>
+
