@@ -75,6 +75,8 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		tb_PhoneCallLockActive.setOnCheckedChangeListener(this);
 		
 		checkSharePrefence();
+		
+		new WhiteDot(getApplicationContext());
 	}
 
 	void checkSharePrefence(){
