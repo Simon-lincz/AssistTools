@@ -4,4 +4,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <!--  -->
+    <dimen name="control_board_emptybtn_radius">10dp</dimen>
+    <dimen name="control_board_icon_offset">20dp</dimen>
+    
 </resources>
