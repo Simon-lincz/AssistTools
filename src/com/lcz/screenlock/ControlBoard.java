@@ -2,11 +2,9 @@ package com.lcz.screenlock;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,13 +17,13 @@ public class ControlBoard {
 	
 	static boolean DBG = true;
 	static String TAG = "ScreenLock-WhiteDot";
+	
 	ControlBoard_Interface mInterface;
 
 	Context mContext;
 	LayoutInflater mLayoutInflater;
 	private WindowManager mWindowManager;
 	private Resources mResources;
-	Utils mUtils;
 	
 	private boolean controlboard_isAdded = false; // 是否已增加
 	private ViewGroup control_board;
@@ -35,6 +33,7 @@ public class ControlBoard {
 					   R.id.control_board_WSbtn,R.id.control_board_Sbtn,R.id.control_board_ESbtn};
 	ControlButtons mControlButtons[] = new ControlButtons[9];
 	private LayoutParams params_board;
+	private Utils mUtils;
 	
 	interface ControlBoard_Interface {
 		void setVisibility(int visibility);
@@ -64,7 +63,7 @@ public class ControlBoard {
 		}
 	}
 	
-	public ControlBoard(Context context,ControlBoard_Interface board_Interface) {
+	public ControlBoard(Context context,Utils utils,ControlBoard_Interface board_Interface) {
 		// TODO Auto-generated constructor stub
 		mContext = context;
 		mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -72,7 +71,7 @@ public class ControlBoard {
 				Context.WINDOW_SERVICE);
 		mResources = mContext.getResources();
 		mInterface = board_Interface;
-		mUtils = new Utils(mContext);
+		mUtils = utils;
 		createControlBoard(context);
 	}
 

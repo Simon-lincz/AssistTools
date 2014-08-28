@@ -71,7 +71,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 		
 		// AdminReceiver ¼Ì³Ð×Ô DeviceAdminReceiver
 		if(mSharedPreferences == null){
-			mSharedPreferences = context.getSharedPreferences(MainActivity.SharedPreferences_Name, Context.MODE_PRIVATE);
+			mSharedPreferences = context.getSharedPreferences(Utils.SharedPreferences_Name, Context.MODE_PRIVATE);
 		}
 		
 		if(DBG)Log.d(TAG, "mTelephonyManager.getCallState:" + mTelephonyManager.getCallState());
@@ -80,7 +80,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
 			break;
 		case TelephonyManager.CALL_STATE_OFFHOOK:
-			if(mSharedPreferences.getBoolean(MainActivity.CONFIG_PHONE_CALL_SCREENLOCK, false))mHandler.sendEmptyMessageDelayed(MSG_LOCKNOW, 3000);
+			if(mSharedPreferences.getBoolean(Utils.CONFIG_PHONE_CALL_SCREENLOCK, false))mHandler.sendEmptyMessageDelayed(MSG_LOCKNOW, 3000);
 			break;
 		case TelephonyManager.CALL_STATE_IDLE:
 			

@@ -3,14 +3,18 @@ package com.lcz.screenlock;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Service;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -25,71 +29,35 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends Activity implements OnClickListener,OnCheckedChangeListener{
 
-	static boolean DBG = false;
-	static String TAG = "ScreenLock-Main";
+	static boolean DBG = true;
+	static String TAG = "ScreenLock-MainActivity";
 	
-	private DevicePolicyManager policyManager;
-	private ComponentName componentName;
 	ImageButton imbtn_screenlock;
 	ToggleButton tb_DeviceAdminActive;
 	ToggleButton tb_PhoneCallLockActive;
-//	Switch sw_DeviceAdminActive;
-	
-	SharedPreferences mSharedPreferences;
-	public static final String SharedPreferences_Name = "config";
-	public static final String CONFIG_FIRST_RUN = "app_first_run";
-	public static final String CONFIG_PHONE_CALL_SCREENLOCK = "lockscreen_when_makecall";
-	public static final String CONFIG_PHONE_CALL_SCREENLOCK_TIMEOUT = "lockscreen_timeout_when_makecall";
-	public static final String CONFIG_SHOW_NOTIFICATION_SWITCH = "lockscreen_when_makecall";
-	public static final String CONFIG_SHOW_WHITE_DOT = "show_white_dot";
-	
-	public static final boolean CONFIG_YES = true;
-	public static final boolean CONFIG_NO = false;
-	public static final int CONFIG_TIMEOUT = 3000;
-	
-	
+	MainActivityServiceConnect mServiceConnect;
 	boolean isActive = false;
+	
+	IMainService mService;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		// 获取设备管理服务
-		policyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-
-		// AdminReceiver 继承自 DeviceAdminReceiver
-		componentName = new ComponentName(this, AdminReceiver.class);
-//		sw_DeviceAdminActive = (Switch) findViewById(R.id.screenlock_switch_id);
-//		sw_DeviceAdminActive.setOnCheckedChangeListener(this);
-		
 		imbtn_screenlock = (ImageButton) findViewById(R.id.screenlock_btn_id);
 		imbtn_screenlock.setOnClickListener(this);
 		
 		tb_DeviceAdminActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_id);
 		tb_DeviceAdminActive.setOnCheckedChangeListener(this);
-		//android.intent.action.ASSIST 唤醒 Google Now
-//		checkAdminActive(true);
 		
 		tb_PhoneCallLockActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_phone_id);
 		tb_PhoneCallLockActive.setOnCheckedChangeListener(this);
 		
-		checkSharePrefence();
-		
-		new WhiteDot(getApplicationContext());
-	}
-
-	void checkSharePrefence(){
-		mSharedPreferences = getSharedPreferences(SharedPreferences_Name, Context.MODE_PRIVATE);
-		if(mSharedPreferences.getBoolean(CONFIG_FIRST_RUN, CONFIG_YES)){
-			Editor editor = mSharedPreferences.edit();
-			editor.putBoolean(CONFIG_FIRST_RUN, CONFIG_NO);
-			editor.putBoolean(CONFIG_PHONE_CALL_SCREENLOCK,CONFIG_YES);
-			editor.putBoolean(CONFIG_SHOW_NOTIFICATION_SWITCH, CONFIG_YES);
-			editor.putBoolean(CONFIG_SHOW_WHITE_DOT, CONFIG_YES);
-			editor.putInt(CONFIG_PHONE_CALL_SCREENLOCK_TIMEOUT, CONFIG_TIMEOUT);
-			editor.commit();
-		}
+		mServiceConnect = new MainActivityServiceConnect();
+		Intent conn = new Intent(this, MainService.class);
+		startService(conn);
+		bindService(conn, mServiceConnect, Service.BIND_NOT_FOREGROUND);
 	}
 	
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -102,14 +70,30 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
-		checkAdminActive(false);
-		Intent intent = getIntent();
-		if(intent.getBooleanExtra(ScreenLockWidgetProvider.LOCKSCREEN_FLAG, false)){
-			lockScreenNow();
+		try {
+			if(mService != null)
+				mService.checkAdminActive(false);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		if(DBG)Log.d(TAG, "onStart");
 		super.onStart();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		if(DBG)Log.d(TAG, "onDestroy");
+		unbindService(mServiceConnect);
+//		try {
+//			mService.stopService();
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		super.onDestroy();
 	}
 	
 	@Override
@@ -118,19 +102,10 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		switch (compoundButton.getId()) {
 		case R.id.screenlock_togglebtn_id:
 			if(ischeck){
-				activeManage();
+//				activeManage();
 			}else{
-				removeManage();
-			}
-			break;
-		case R.id.screenlock_togglebtn_phone_id:
-			Editor editor = mSharedPreferences.edit();
-			if(ischeck){
-				editor.putBoolean(CONFIG_PHONE_CALL_SCREENLOCK,CONFIG_YES);
-			}else{
-				editor.putBoolean(CONFIG_PHONE_CALL_SCREENLOCK,CONFIG_NO);
-			}
-			editor.commit();
+/*				removeManage();
+*/			}
 			break;
 		default:
 			break;
@@ -142,8 +117,6 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		// TODO Auto-generated method stub
 		switch (arg0.getId()) {
 		case R.id.screenlock_btn_id:
-			checkAdminActive(true);
-			lockScreenNow();
 			break;
 
 		default:
@@ -152,7 +125,6 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 	}
 	
 	void refreshView(boolean working){
-//		sw_DeviceAdminActive.setChecked(working);
 		tb_DeviceAdminActive.setChecked(working);
 		if(working){
 			imbtn_screenlock.setBackgroundResource(R.drawable.ic_lock_power_off_background);
@@ -168,51 +140,7 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 	}
 	
 	//===============================================================================================
-	void checkAdminActive(boolean activeNow){
-		isActive = policyManager.isAdminActive(componentName);
-		if(!isActive && activeNow){
-			activeManage();
-		}
-		refreshView(isActive);
-		isActive = policyManager.isAdminActive(componentName);
-	}
-	
-	void resetPasswd(){
-		policyManager.resetPassword("1111", DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
-	}
-	
-	void deletePasswd(){
-		policyManager.resetPassword("1111", DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
-	}
-	
-	private void lockScreenNow() {
-		if(isActive){
-			policyManager.lockNow();
-			finish();
-		}else{
-			//checkAdminActive(true);
-		}
-	}
 
-	private void activeManage() {
-		if(DBG)Log.d(TAG, "activeManage");
-		// 启动设备管理(隐式Intent) - 在AndroidManifest.xml中设定相应过滤器
-		Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-		// 权限列表
-		intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-		// 描述(additional explanation)
-		intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,this.getResources().getString(R.string.device_admin_explanation));
-		startActivityForResult(intent, 0);
-	}
-	
-	private void removeManage() {
-		if(policyManager != null && componentName != null){
-			if(DBG)Log.d(TAG, "removeManage");
-			policyManager.removeActiveAdmin(componentName);
-			checkAdminActive(false);
-		}
-	}
-	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -264,5 +192,37 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	IMainActivity mCallback = new  IMainActivity.Stub(){
+
+		@Override
+		public void refreshView(boolean working) throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
+	class MainActivityServiceConnect implements ServiceConnection {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			// TODO Auto-generated method stub
+			if (DBG)
+				Log.d(TAG, "onServiceConnected");
+			mService = IMainService.Stub.asInterface(service);
+			try {
+				mService.registerCallback(mCallback);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			// TODO Auto-generated method stub
+			if (DBG)
+				Log.d(TAG, "onServiceDisconnected");
+		}
 	}
 }

@@ -1,5 +1,8 @@
 package com.lcz.screenlock;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,6 +16,9 @@ import android.widget.Toast;
 
 public class Utils {
 
+	static boolean DBG = true;
+	static String TAG = "ScreenLock-Utils";
+	
 	Context mContext;
 	private DevicePolicyManager policyManager;
 	private ComponentName componentName;
@@ -46,6 +52,12 @@ public class Utils {
 		mResources = mContext.getResources();
 		
 		checkSharePrefence();
+		
+	}
+	
+	@SuppressWarnings("deprecation")
+	Notification CreateForegroundNotification(){
+		return new MainNotification(mContext);
 	}
 	
 	void checkSharePrefence(){
@@ -70,6 +82,22 @@ public class Utils {
 		}
 	}
 	
+	void checkAdminActive(boolean activeNow){
+		isActive = policyManager.isAdminActive(componentName);
+		if(!isActive && activeNow){
+			activeManage();
+		}
+		isActive = policyManager.isAdminActive(componentName);
+	}
+	
+	void resetPasswd(){
+		policyManager.resetPassword("1111", DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
+	}
+	
+	void deletePasswd(){
+		policyManager.resetPassword("1111", DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
+	}
+	
 	public void activeManage() {
 		// 启动设备管理(隐式Intent) - 在AndroidManifest.xml中设定相应过滤器
 		Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
@@ -78,15 +106,24 @@ public class Utils {
 		// 描述(additional explanation)
 		intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,mResources.getString(R.string.device_admin_explanation));
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		
+	}
+	
+	public void removeManage() {
+		if(policyManager != null && componentName != null){
+			if(DBG)Log.d(TAG, "removeManage");
+			policyManager.removeActiveAdmin(componentName);
+			checkAdminActive(false);
+		}
 	}
 	
 	void setVolumeUP(){
-		mAudioManager.adjustStreamVolume(mAudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI | AudioManager.FLAG_PLAY_SOUND);
+		mAudioManager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI | AudioManager.FLAG_PLAY_SOUND);
+//		mAudioManager.adjustStreamVolume(mAudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI | AudioManager.FLAG_PLAY_SOUND);
 	}
 	
 	void setVolumeDown(){
-		mAudioManager.adjustStreamVolume(mAudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI | AudioManager.FLAG_PLAY_SOUND);
+		mAudioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI | AudioManager.FLAG_PLAY_SOUND);
+//		mAudioManager.adjustStreamVolume(mAudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI | AudioManager.FLAG_PLAY_SOUND);
 	}
 	
 	void GoHomeLauncher(){

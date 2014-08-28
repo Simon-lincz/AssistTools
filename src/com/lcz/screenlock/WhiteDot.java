@@ -18,7 +18,7 @@ import android.widget.Button;
 public class WhiteDot {
 	
 	
-	static boolean DBG = true;
+	static boolean DBG = false;
 	static String TAG = "ScreenLock-WhiteDot";
 	
 
@@ -56,21 +56,15 @@ public class WhiteDot {
 			}
 		};
 	};
-	
-	
-	public WhiteDot() {
-		// TODO Auto-generated constructor stub
-		this(null);
-	}
 
-	public WhiteDot(Context context) {
+	public WhiteDot(Context context,Utils utils) {
 		// TODO Auto-generated constructor stub
 		mContext = context;
 		mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		wm = (WindowManager) mContext.getApplicationContext().getSystemService(
 				Context.WINDOW_SERVICE);
 		createFloatBtn(mContext);
-		mControlBoard = new ControlBoard(mContext,new ControlBoard.ControlBoard_Interface() {
+		mControlBoard = new ControlBoard(mContext,utils,new ControlBoard.ControlBoard_Interface() {
 			
 			@Override
 			public void setVisibility(int visibility) {
