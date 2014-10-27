@@ -1,4 +1,4 @@
-package com.lcz.screenlock;
+package com.fornut.assisttools;
 
 import android.app.admin.DeviceAdminReceiver;
 import android.content.Context;

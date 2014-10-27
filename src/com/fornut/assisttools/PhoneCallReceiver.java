@@ -1,4 +1,4 @@
-package com.lcz.screenlock;
+package com.fornut.assisttools;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
@@ -19,12 +19,9 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 	
 	Context mContext;
 	
-	// 获取电话管理服务
 	TelephonyManager mTelephonyManager;
 	
-	// 获取设备管理服务
 	DevicePolicyManager mDevicePolicyManager;
-	// AdminReceiver 继承自 DeviceAdminReceiver
 	ComponentName mComponentName;
 	
 	SharedPreferences mSharedPreferences;
@@ -54,22 +51,18 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 			mContext = context;
 		}
 		
-		// 获取电话管理服务
 		if(mTelephonyManager == null){
 			mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 		}
 		
-		// 获取设备管理服务
 		if(mDevicePolicyManager == null){
 			mDevicePolicyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
 		}
 
-		// AdminReceiver 继承自 DeviceAdminReceiver
 		if(mComponentName == null){
 			mComponentName = new ComponentName(context, AdminReceiver.class);
 		}
 		
-		// AdminReceiver 继承自 DeviceAdminReceiver
 		if(mSharedPreferences == null){
 			mSharedPreferences = context.getSharedPreferences(MainActivity.SharedPreferences_Name, Context.MODE_PRIVATE);
 		}
@@ -94,7 +87,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 		if(context == null) 
 			return;
 		
-		// 获取设备管理服务
 		boolean isActive = mDevicePolicyManager.isAdminActive(mComponentName);
 		if(isActive){
 			mDevicePolicyManager.lockNow();
@@ -110,10 +102,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 //	class MyPhoneStateListener extends PhoneStateListener {
 //		public void onCallStateChanged(int state, String incomingNumber) {
 //			switch (state) {
-//			case TelephonyManager.CALL_STATE_IDLE://空闲
+//			case TelephonyManager.CALL_STATE_IDLE://锟斤拷锟斤拷
 //				Log.d(TAG, "IDLE");
 //				break;
-//			case TelephonyManager.CALL_STATE_OFFHOOK://摘机
+//			case TelephonyManager.CALL_STATE_OFFHOOK://摘锟斤拷
 //				Log.d(TAG, "OFFHOOK");
 //				break;
 //			case TelephonyManager.CALL_STATE_RINGING:

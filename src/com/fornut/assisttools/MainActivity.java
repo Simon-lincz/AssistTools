@@ -1,4 +1,4 @@
-package com.lcz.screenlock;
+package com.fornut.assisttools;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -55,10 +55,8 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		// 获取设备管理服务
 		policyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 
-		// AdminReceiver 继承自 DeviceAdminReceiver
 		componentName = new ComponentName(this, AdminReceiver.class);
 //		sw_DeviceAdminActive = (Switch) findViewById(R.id.screenlock_switch_id);
 //		sw_DeviceAdminActive.setOnCheckedChangeListener(this);
@@ -68,7 +66,6 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		
 		tb_DeviceAdminActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_id);
 		tb_DeviceAdminActive.setOnCheckedChangeListener(this);
-		//android.intent.action.ASSIST 唤醒 Google Now
 //		checkAdminActive(true);
 		
 		tb_PhoneCallLockActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_phone_id);
@@ -194,11 +191,8 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 
 	private void activeManage() {
 		if(DBG)Log.d(TAG, "activeManage");
-		// 启动设备管理(隐式Intent) - 在AndroidManifest.xml中设定相应过滤器
 		Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-		// 权限列表
 		intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-		// 描述(additional explanation)
 		intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,this.getResources().getString(R.string.device_admin_explanation));
 		startActivityForResult(intent, 0);
 	}

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lcz.screenlock"
+    package="com.fornut.assisttools"
     android:versionCode="3"
     android:versionName="1.02">
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="18" />
+        android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.lcz.screenlock.MainActivity"
+            android:name="com.fornut.assisttools.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
         </activity>
         
         <activity
-            android:name="com.lcz.screenlock.ExtraActions"
+            android:name="com.fornut.assisttools.ExtraActions"
             android:label="@string/app_name" >
             <intent-filter>
                   <action android:name="android.intent.action.ASSIST" />
@@ -38,7 +38,7 @@
         
         <!-- 设备管理 -->
         <receiver
-            android:name=".AdminReceiver"
+            android:name="com.fornut.assisttools.AdminReceiver"
             android:description="@string/device_admin_description"
             android:label="@string/device_admin_name"
             android:permission="android.permission.BIND_DEVICE_ADMIN" >
@@ -52,11 +52,11 @@
             </intent-filter>
         </receiver>
         
-        <receiver android:name="com.lcz.screenlock.ScreenLockWidgetProvider" >
+        <receiver android:name="com.fornut.assisttools.ScreenLockWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.lcz.screenlock.LOCKNOW"/>
-                <action android:name="com.lcz.screenlock.REFRESHWIDGET"/>
+                <action android:name="com.fornut.assisttools.LOCKNOW"/>
+                <action android:name="com.fornut.assisttools.REFRESHWIDGET"/>
             </intent-filter>
 
             <meta-data
@@ -64,7 +64,7 @@
                 android:resource="@xml/screenlock_widget" />
         </receiver>
         
-        <receiver android:name="com.lcz.screenlock.PhoneCallReceiver">
+        <receiver android:name="com.fornut.assisttools.PhoneCallReceiver">
             <intent-filter >
                 <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>

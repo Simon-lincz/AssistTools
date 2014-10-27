@@ -1,4 +1,4 @@
-package com.lcz.screenlock;
+package com.fornut.assisttools;
 
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
@@ -17,9 +17,7 @@ public class ExtraActions extends Activity{
 	}
 	
 	private void lockScreenNow(Context context) {
-		// 获取设备管理服务
 		DevicePolicyManager policyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-		// AdminReceiver 继承自 DeviceAdminReceiver
 		ComponentName componentName = new ComponentName(context, AdminReceiver.class);
 		boolean isActive = policyManager.isAdminActive(componentName);
 		if(isActive){
