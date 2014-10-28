@@ -3,12 +3,13 @@ package com.fornut.assisttools;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -22,123 +23,83 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 
+import com.fornut.assisttools.controllers.AssistToolsService;
 import com.fornut.assisttools.controllers.ScreenLockWidgetProvider;
 import com.fornut.assisttools.models.DevicePolicyManagerUtils;
 import com.fornut.assisttools.views.WhiteDot;
 
-public class MainActivity extends Activity implements OnClickListener,OnCheckedChangeListener{
+public class MainActivity extends Activity implements OnClickListener,
+		OnCheckedChangeListener {
 
 	static boolean DBG = false;
-	static String TAG = "ScreenLock-Main";
-	
+	static String TAG = "AssistTools-MainActivity";
+
+	private static final int ACTIVE_DEVICEPOLICYMANAGER_REQUESTCODE = 1;
+
 	ImageButton imbtn_screenlock;
 	ToggleButton tb_DeviceAdminActive;
 	ToggleButton tb_PhoneCallLockActive;
 
-	SharedPreferences mSharedPreferences;
-	public static final String SharedPreferences_Name = "config";
-	public static final String CONFIG_FIRST_RUN = "app_first_run";
-	public static final String CONFIG_PHONE_CALL_SCREENLOCK = "lockscreen_when_makecall";
-	public static final String CONFIG_PHONE_CALL_SCREENLOCK_TIMEOUT = "lockscreen_timeout_when_makecall";
-	public static final String CONFIG_SHOW_NOTIFICATION_SWITCH = "lockscreen_when_makecall";
-	public static final String CONFIG_SHOW_WHITE_DOT = "show_white_dot";
-
-	public static final boolean CONFIG_YES = true;
-	public static final boolean CONFIG_NO = false;
-	public static final int CONFIG_TIMEOUT = 3000;
+	private AssistToolsService mService;
+	private boolean mIsServiceConnected = false;
 	
-	boolean isActive = false;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		init();
+
+		Intent service = new Intent(this, AssistToolsService.class);
+		startService(service);
+		bindService(service, mServiceConnection, Service.START_STICKY | Service.BIND_AUTO_CREATE);
+	}
+
+	private void init() {
 		imbtn_screenlock = (ImageButton) findViewById(R.id.screenlock_btn_id);
 		imbtn_screenlock.setOnClickListener(this);
-		
+
 		tb_DeviceAdminActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_id);
 		tb_DeviceAdminActive.setOnCheckedChangeListener(this);
-//		checkAdminActive(true);
-		
+		// checkAdminActive(true);
+
 		tb_PhoneCallLockActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_phone_id);
 		tb_PhoneCallLockActive.setOnCheckedChangeListener(this);
-		
-		init();
-		
-		checkSharePrefence();
 	}
 
-	 private void init() {  
-	        RelativeLayout layout= (RelativeLayout) findViewById(R.id.root);  
-	        /*/
-	        final CustomView view=new CustomView(this);  
-	        view.setMinimumHeight(1000);  
-	        view.setMinimumWidth(600);  
-	        //通知view组件重绘    
-	        view.invalidate();  
-	        layout.addView(view);  
-	        /*/
-	        final WhiteDot view=new WhiteDot(this);  
-	        view.setMinimumHeight(200);  
-	        view.setMinimumWidth(200); 
-	        //通知view组件重绘    
-	        view.invalidate();  
-	        layout.addView(view);  
-	        //*/
-	    }
-
-	void checkSharePrefence(){
-		mSharedPreferences = getSharedPreferences(SharedPreferences_Name, Context.MODE_PRIVATE);
-		if(mSharedPreferences.getBoolean(CONFIG_FIRST_RUN, CONFIG_YES)){
-			Editor editor = mSharedPreferences.edit();
-			editor.putBoolean(CONFIG_FIRST_RUN, CONFIG_NO);
-			editor.putBoolean(CONFIG_PHONE_CALL_SCREENLOCK,CONFIG_YES);
-			editor.putBoolean(CONFIG_SHOW_NOTIFICATION_SWITCH, CONFIG_YES);
-			editor.putBoolean(CONFIG_SHOW_WHITE_DOT, CONFIG_YES);
-			editor.putInt(CONFIG_PHONE_CALL_SCREENLOCK_TIMEOUT, CONFIG_TIMEOUT);
-			editor.commit();
-		}
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	private void setSystemUiVisibility(View rootView) {
+		rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 	}
-	
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private void setSystemUiVisibility(View rootView) {
-            rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-    }
-    
+
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
-		refreshView(DevicePolicyManagerUtils.getInstance(this).checkAdminActive());
+		refreshView(DevicePolicyManagerUtils.getInstance(this)
+				.checkAdminActive());
 		Intent intent = getIntent();
-		if(intent.getBooleanExtra(ScreenLockWidgetProvider.LOCKSCREEN_FLAG, false)){
+		if (intent.getBooleanExtra(ScreenLockWidgetProvider.LOCKSCREEN_FLAG,
+				false)) {
 			DevicePolicyManagerUtils.getInstance(this).lockScreenNow();
 		}
 		super.onStart();
 	}
-	
+
 	@Override
 	public void onCheckedChanged(CompoundButton compoundButton, boolean ischeck) {
 		// TODO Auto-generated method stub
 		switch (compoundButton.getId()) {
 		case R.id.screenlock_togglebtn_id:
-			if(ischeck){
-				DevicePolicyManagerUtils.getInstance(this).activeManage(this);
-			}else{
+			if (ischeck) {
+				DevicePolicyManagerUtils.getInstance(this).activeManage(this,ACTIVE_DEVICEPOLICYMANAGER_REQUESTCODE);
+			} else {
 				DevicePolicyManagerUtils.getInstance(this).removeManage();
 				refreshView(false);
 			}
 			break;
 		case R.id.screenlock_togglebtn_phone_id:
-			Editor editor = mSharedPreferences.edit();
-			if(ischeck){
-				editor.putBoolean(CONFIG_PHONE_CALL_SCREENLOCK,CONFIG_YES);
-			}else{
-				editor.putBoolean(CONFIG_PHONE_CALL_SCREENLOCK,CONFIG_NO);
-			}
-			editor.commit();
 			break;
 		default:
 			break;
@@ -151,10 +112,9 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		switch (arg0.getId()) {
 		case R.id.screenlock_btn_id:
 			if (DevicePolicyManagerUtils.getInstance(this).checkAdminActive()) {
-				Log.d("lincz1", "lock");
 				DevicePolicyManagerUtils.getInstance(this).lockScreenNow();
 			} else {
-				DevicePolicyManagerUtils.getInstance(this).activeManage(this);
+				DevicePolicyManagerUtils.getInstance(this).activeManage(this,ACTIVE_DEVICEPOLICYMANAGER_REQUESTCODE);
 			}
 
 			break;
@@ -163,16 +123,18 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 			break;
 		}
 	}
-	
-	void refreshView(boolean working){
-//		sw_DeviceAdminActive.setChecked(working);
+
+	void refreshView(boolean working) {
+		// sw_DeviceAdminActive.setChecked(working);
 		tb_DeviceAdminActive.setChecked(working);
-		if(working){
-			imbtn_screenlock.setBackgroundResource(R.drawable.ic_lock_power_off_background);
-		}else{
+		if (working) {
+			imbtn_screenlock
+					.setBackgroundResource(R.drawable.ic_lock_power_off_background);
+		} else {
 			imbtn_screenlock.setBackgroundResource(R.drawable.grayround);
 		}
-		Intent refreshwidget_intent = new Intent(ScreenLockWidgetProvider.REFRESHWIDGET_ACTION);
+		Intent refreshwidget_intent = new Intent(
+				ScreenLockWidgetProvider.REFRESHWIDGET_ACTION);
 		refreshwidget_intent.putExtra(
 				ScreenLockWidgetProvider.REFRESHWIDGET_FLAG,
 				working ? ScreenLockWidgetProvider.WIDGET_BTN_ENABLE
@@ -180,15 +142,44 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		sendBroadcast(refreshwidget_intent);
 	}
 
-	//===============================================================================================
+	// ===============================================================================================
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		if (mIsServiceConnected) {
+			unbindService(mServiceConnection);
+			mService = null;
+			mIsServiceConnected = false;
+		}
+		super.onDestroy();
+	}
+
+	ServiceConnection mServiceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mService = null;
+			mIsServiceConnected = false;
+		}
+
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			// 返回一个MsgService对象
+			mService = ((AssistToolsService.LocalBinder)service).getService();
+			mIsServiceConnected = true;
+		}
+	};
+
+	// ===============================================================================================
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		switch (requestCode) {
-		case 0:
-			if(resultCode == RESULT_OK){
+		case ACTIVE_DEVICEPOLICYMANAGER_REQUESTCODE:
+			if (resultCode == RESULT_OK) {
 				refreshView(true);
-			}else{
+			} else {
 				refreshView(false);
 			}
 			break;
@@ -198,13 +189,15 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	//===============================================================================================
-	
+
+	// ===============================================================================================
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		menu.add(0, 0, 0, getResources().getString(R.string.action_about_content));
+		menu.add(0, 0, 0,
+				getResources().getString(R.string.action_about_content));
 		return true;
 	}
 
@@ -212,10 +205,11 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		// TODO Auto-generated method stub
-		menu.add(0, 0, 0, getResources().getString(R.string.action_about_content));
+		menu.add(0, 0, 0,
+				getResources().getString(R.string.action_about_content));
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
@@ -223,7 +217,8 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		case 0:
 			AlertDialog dialog;
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(R.string.action_about_content).setCancelable(true);
+			builder.setMessage(R.string.action_about_content).setCancelable(
+					true);
 			dialog = builder.create();
 			dialog.show();
 			break;

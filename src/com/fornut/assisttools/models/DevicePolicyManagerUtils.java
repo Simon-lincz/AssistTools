@@ -32,12 +32,12 @@ public class DevicePolicyManagerUtils {
 		return mPolicyManager.isAdminActive(mComponentName);
 	}
 
-	public void activeManage(Activity activity) {
+	public void activeManage(Activity activity,int requestCode) {
 		Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
 		intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, mComponentName);
 		intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, activity
 				.getResources().getString(R.string.device_admin_explanation));
-		activity.startActivityForResult(intent, 0);
+		activity.startActivityForResult(intent, requestCode);
 	}
 
 	public void removeManage() {

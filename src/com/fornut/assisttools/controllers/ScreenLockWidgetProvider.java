@@ -1,14 +1,6 @@
 package com.fornut.assisttools.controllers;
 
-import com.fornut.assisttools.MainActivity;
-import com.fornut.assisttools.R;
-import com.fornut.assisttools.R.id;
-import com.fornut.assisttools.R.layout;
-import com.fornut.assisttools.R.string;
-import com.fornut.assisttools.models.AdminReceiver;
-
 import android.app.PendingIntent;
-import android.app.admin.DevicePolicyManager;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -18,10 +10,14 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.fornut.assisttools.MainActivity;
+import com.fornut.assisttools.R;
+import com.fornut.assisttools.models.DevicePolicyManagerUtils;
+
 public class ScreenLockWidgetProvider extends AppWidgetProvider{
 
 	static boolean DBG = false;
-	static String TAG = "ScreenLock-WidgetProvider";
+	static String TAG = "AssistTools-WidgetProvider";
 	
 	private static Context mContext;
 	private static AppWidgetManager mAppWidgetManager;
@@ -41,13 +37,8 @@ public class ScreenLockWidgetProvider extends AppWidgetProvider{
 		mContext = context;
 		mAppWidgetManager = appWidgetManager;
 		mAppWidgetIds = appWidgetIds;
-		DevicePolicyManager policyManager = (DevicePolicyManager) mContext.getSystemService(Context.DEVICE_POLICY_SERVICE);
-
-		ComponentName componentName = new ComponentName(mContext, AdminReceiver.class);
-		boolean isActive = policyManager.isAdminActive(componentName);
-		
+		boolean isActive = DevicePolicyManagerUtils.getInstance(context).checkAdminActive();
 		refreshWidget(context, appWidgetManager, mAppWidgetIds, isActive);
-		
 	}
 	
 	@Override
@@ -107,11 +98,8 @@ public class ScreenLockWidgetProvider extends AppWidgetProvider{
 	}
 	
 	private void lockScreenNow(Context context) {
-		DevicePolicyManager policyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-		ComponentName componentName = new ComponentName(context, AdminReceiver.class);
-		boolean isActive = policyManager.isAdminActive(componentName);
-		if(isActive){
-			policyManager.lockNow();
+		if(DevicePolicyManagerUtils.getInstance(context).checkAdminActive()){
+			DevicePolicyManagerUtils.getInstance(context).lockScreenNow();
 		}else{
 			Toast.makeText(context, context.getResources().getString(R.string.toast_app_no_active), Toast.LENGTH_LONG).show();
 		}

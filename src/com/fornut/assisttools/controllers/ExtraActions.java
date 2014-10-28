@@ -1,32 +1,26 @@
 package com.fornut.assisttools.controllers;
 
-import com.fornut.assisttools.R;
-import com.fornut.assisttools.R.string;
-import com.fornut.assisttools.models.AdminReceiver;
-
 import android.app.Activity;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import com.fornut.assisttools.R;
+import com.fornut.assisttools.models.DevicePolicyManagerUtils;
 
 public class ExtraActions extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		lockScreenNow(getApplicationContext());
+		lockScreenNow(this);
 		finish();
 	}
 	
 	private void lockScreenNow(Context context) {
-		DevicePolicyManager policyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-		ComponentName componentName = new ComponentName(context, AdminReceiver.class);
-		boolean isActive = policyManager.isAdminActive(componentName);
-		if(isActive){
-			policyManager.lockNow();
-		}else{
+		if (DevicePolicyManagerUtils.getInstance(this).checkAdminActive()) {
+			DevicePolicyManagerUtils.getInstance(this).lockScreenNow();
+		} else {
 			Toast.makeText(context, context.getResources().getString(R.string.toast_app_no_active), Toast.LENGTH_LONG).show();
 		}
 	}

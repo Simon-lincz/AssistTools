@@ -22,7 +22,6 @@ public class WhiteDot extends View{
 		// TODO Auto-generated constructor stub
 		super(context);
 		mContext = context;
-		setBackgroundResource(R.drawable.ic_launcher);
 	}
 	
 	@Override
@@ -55,9 +54,9 @@ public class WhiteDot extends View{
 		canvas.drawArc(oval1, 0, 360, true, p);// 小弧形
 		
 		// 画图片，就是贴图
-		Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-				R.drawable.ic_launcher);
-		canvas.drawBitmap(bitmap, 250, 360, p);
+//		Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+//				R.drawable.ic_launcher);
+//		canvas.drawBitmap(bitmap, 250, 360, p);
 	}
 	
 	

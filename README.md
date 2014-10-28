@@ -1,6 +1,4 @@
-ScreenLock
+AssistTools
 ==========
 
-Screen Lock tools
-
-hi.
+support: shmcclmm@gmail.com
