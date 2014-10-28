@@ -1,4 +1,6 @@
-package com.fornut.assisttools;
+package com.fornut.assisttools.models;
+
+import com.fornut.assisttools.controllers.ScreenLockWidgetProvider;
 
 import android.app.admin.DeviceAdminReceiver;
 import android.content.Context;
@@ -39,7 +41,6 @@ public class AdminReceiver extends DeviceAdminReceiver{
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
-		
 		super.onReceive(context, intent);
 	}
 	

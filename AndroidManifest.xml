@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     
     <application
         android:allowBackup="true"
@@ -25,9 +26,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name="com.fornut.assisttools.controllers.AssistToolsService"
+            android:label="@string/app_name">
+            
+        </service>
+
+        
         
         <activity
-            android:name="com.fornut.assisttools.ExtraActions"
+            android:name="com.fornut.assisttools.controllers.ExtraActions"
             android:label="@string/app_name" >
             <intent-filter>
                   <action android:name="android.intent.action.ASSIST" />
@@ -38,7 +46,7 @@
         
         <!-- 设备管理 -->
         <receiver
-            android:name="com.fornut.assisttools.AdminReceiver"
+            android:name="com.fornut.assisttools.models.AdminReceiver"
             android:description="@string/device_admin_description"
             android:label="@string/device_admin_name"
             android:permission="android.permission.BIND_DEVICE_ADMIN" >
@@ -52,7 +60,7 @@
             </intent-filter>
         </receiver>
         
-        <receiver android:name="com.fornut.assisttools.ScreenLockWidgetProvider" >
+        <receiver android:name="com.fornut.assisttools.controllers.ScreenLockWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.fornut.assisttools.LOCKNOW"/>
@@ -64,9 +72,10 @@
                 android:resource="@xml/screenlock_widget" />
         </receiver>
         
-        <receiver android:name="com.fornut.assisttools.PhoneCallReceiver">
+        <receiver android:name="com.fornut.assisttools.models.MainReceiver">
             <intent-filter >
                 <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
     </application>

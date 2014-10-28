@@ -1,4 +1,11 @@
-package com.fornut.assisttools;
+package com.fornut.assisttools.controllers;
+
+import com.fornut.assisttools.MainActivity;
+import com.fornut.assisttools.R;
+import com.fornut.assisttools.R.id;
+import com.fornut.assisttools.R.layout;
+import com.fornut.assisttools.R.string;
+import com.fornut.assisttools.models.AdminReceiver;
 
 import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;

@@ -1,4 +1,8 @@
-package com.fornut.assisttools;
+package com.fornut.assisttools.models;
+
+import com.fornut.assisttools.MainActivity;
+import com.fornut.assisttools.R;
+import com.fornut.assisttools.R.string;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
@@ -12,7 +16,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class PhoneCallReceiver extends BroadcastReceiver {
+public class MainReceiver extends BroadcastReceiver {
 
 	static boolean DBG = true;
 	static String TAG = "ScreenLock-PhoneCallReceiver";
@@ -95,23 +99,4 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 		}
 	}
 	
-	
-//	MyPhoneStateListener phoneListener = new MyPhoneStateListener();
-//	telephony.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
-	
-//	class MyPhoneStateListener extends PhoneStateListener {
-//		public void onCallStateChanged(int state, String incomingNumber) {
-//			switch (state) {
-//			case TelephonyManager.CALL_STATE_IDLE://����
-//				Log.d(TAG, "IDLE");
-//				break;
-//			case TelephonyManager.CALL_STATE_OFFHOOK://ժ��
-//				Log.d(TAG, "OFFHOOK");
-//				break;
-//			case TelephonyManager.CALL_STATE_RINGING:
-//				Log.d(TAG, "RINGING");
-//				break;
-//			}
-//		}
-//	}
 }

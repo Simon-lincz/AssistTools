@@ -3,8 +3,6 @@ package com.fornut.assisttools;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,20 +19,22 @@ import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
+
+import com.fornut.assisttools.controllers.ScreenLockWidgetProvider;
+import com.fornut.assisttools.models.DevicePolicyManagerUtils;
+import com.fornut.assisttools.views.WhiteDot;
 
 public class MainActivity extends Activity implements OnClickListener,OnCheckedChangeListener{
 
 	static boolean DBG = false;
 	static String TAG = "ScreenLock-Main";
 	
-	private DevicePolicyManager policyManager;
-	private ComponentName componentName;
 	ImageButton imbtn_screenlock;
 	ToggleButton tb_DeviceAdminActive;
 	ToggleButton tb_PhoneCallLockActive;
-//	Switch sw_DeviceAdminActive;
-	
+
 	SharedPreferences mSharedPreferences;
 	public static final String SharedPreferences_Name = "config";
 	public static final String CONFIG_FIRST_RUN = "app_first_run";
@@ -42,25 +42,18 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 	public static final String CONFIG_PHONE_CALL_SCREENLOCK_TIMEOUT = "lockscreen_timeout_when_makecall";
 	public static final String CONFIG_SHOW_NOTIFICATION_SWITCH = "lockscreen_when_makecall";
 	public static final String CONFIG_SHOW_WHITE_DOT = "show_white_dot";
-	
+
 	public static final boolean CONFIG_YES = true;
 	public static final boolean CONFIG_NO = false;
 	public static final int CONFIG_TIMEOUT = 3000;
 	
-	
 	boolean isActive = false;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		policyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-
-		componentName = new ComponentName(this, AdminReceiver.class);
-//		sw_DeviceAdminActive = (Switch) findViewById(R.id.screenlock_switch_id);
-//		sw_DeviceAdminActive.setOnCheckedChangeListener(this);
-		
 		imbtn_screenlock = (ImageButton) findViewById(R.id.screenlock_btn_id);
 		imbtn_screenlock.setOnClickListener(this);
 		
@@ -71,8 +64,29 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		tb_PhoneCallLockActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_phone_id);
 		tb_PhoneCallLockActive.setOnCheckedChangeListener(this);
 		
+		init();
+		
 		checkSharePrefence();
 	}
+
+	 private void init() {  
+	        RelativeLayout layout= (RelativeLayout) findViewById(R.id.root);  
+	        /*/
+	        final CustomView view=new CustomView(this);  
+	        view.setMinimumHeight(1000);  
+	        view.setMinimumWidth(600);  
+	        //通知view组件重绘    
+	        view.invalidate();  
+	        layout.addView(view);  
+	        /*/
+	        final WhiteDot view=new WhiteDot(this);  
+	        view.setMinimumHeight(200);  
+	        view.setMinimumWidth(200); 
+	        //通知view组件重绘    
+	        view.invalidate();  
+	        layout.addView(view);  
+	        //*/
+	    }
 
 	void checkSharePrefence(){
 		mSharedPreferences = getSharedPreferences(SharedPreferences_Name, Context.MODE_PRIVATE);
@@ -97,13 +111,11 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
-		checkAdminActive(false);
+		refreshView(DevicePolicyManagerUtils.getInstance(this).checkAdminActive());
 		Intent intent = getIntent();
 		if(intent.getBooleanExtra(ScreenLockWidgetProvider.LOCKSCREEN_FLAG, false)){
-			lockScreenNow();
+			DevicePolicyManagerUtils.getInstance(this).lockScreenNow();
 		}
-		
-		if(DBG)Log.d(TAG, "onStart");
 		super.onStart();
 	}
 	
@@ -113,9 +125,10 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 		switch (compoundButton.getId()) {
 		case R.id.screenlock_togglebtn_id:
 			if(ischeck){
-				activeManage();
+				DevicePolicyManagerUtils.getInstance(this).activeManage(this);
 			}else{
-				removeManage();
+				DevicePolicyManagerUtils.getInstance(this).removeManage();
+				refreshView(false);
 			}
 			break;
 		case R.id.screenlock_togglebtn_phone_id:
@@ -131,14 +144,19 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 			break;
 		}
 	}
-	
+
 	@Override
 	public void onClick(View arg0) {
 		// TODO Auto-generated method stub
 		switch (arg0.getId()) {
 		case R.id.screenlock_btn_id:
-			checkAdminActive(true);
-			lockScreenNow();
+			if (DevicePolicyManagerUtils.getInstance(this).checkAdminActive()) {
+				Log.d("lincz1", "lock");
+				DevicePolicyManagerUtils.getInstance(this).lockScreenNow();
+			} else {
+				DevicePolicyManagerUtils.getInstance(this).activeManage(this);
+			}
+
 			break;
 
 		default:
@@ -161,50 +179,8 @@ public class MainActivity extends Activity implements OnClickListener,OnCheckedC
 						: ScreenLockWidgetProvider.WIDGET_BTN_DISABLE);
 		sendBroadcast(refreshwidget_intent);
 	}
-	
-	//===============================================================================================
-	void checkAdminActive(boolean activeNow){
-		isActive = policyManager.isAdminActive(componentName);
-		if(!isActive && activeNow){
-			activeManage();
-		}
-		refreshView(isActive);
-		isActive = policyManager.isAdminActive(componentName);
-	}
-	
-	void resetPasswd(){
-		policyManager.resetPassword("1111", DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
-	}
-	
-	void deletePasswd(){
-		policyManager.resetPassword("1111", DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
-	}
-	
-	private void lockScreenNow() {
-		if(isActive){
-			policyManager.lockNow();
-			finish();
-		}else{
-			//checkAdminActive(true);
-		}
-	}
 
-	private void activeManage() {
-		if(DBG)Log.d(TAG, "activeManage");
-		Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-		intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-		intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,this.getResources().getString(R.string.device_admin_explanation));
-		startActivityForResult(intent, 0);
-	}
-	
-	private void removeManage() {
-		if(policyManager != null && componentName != null){
-			if(DBG)Log.d(TAG, "removeManage");
-			policyManager.removeActiveAdmin(componentName);
-			checkAdminActive(false);
-		}
-	}
-	
+	//===============================================================================================
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
