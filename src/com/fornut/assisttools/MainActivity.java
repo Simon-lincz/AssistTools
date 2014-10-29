@@ -65,6 +65,9 @@ public class MainActivity extends Activity implements OnClickListener,
 
 		tb_PhoneCallLockActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_phone_id);
 		tb_PhoneCallLockActive.setOnCheckedChangeListener(this);
+		
+		RelativeLayout layout = (RelativeLayout) findViewById(R.id.root);
+		layout.addView(new SampleView(this));
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
