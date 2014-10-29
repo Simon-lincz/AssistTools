@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="whitedot_background">#000000</color>
+    <color name="quickswitch_panel_background">#a0000000</color>
+</resources>

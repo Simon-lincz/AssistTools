@@ -10,7 +10,6 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -20,13 +19,11 @@ import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 
 import com.fornut.assisttools.controllers.AssistToolsService;
 import com.fornut.assisttools.controllers.ScreenLockWidgetProvider;
 import com.fornut.assisttools.models.DevicePolicyManagerUtils;
-import com.fornut.assisttools.views.WhiteDot;
 
 public class MainActivity extends Activity implements OnClickListener,
 		OnCheckedChangeListener {

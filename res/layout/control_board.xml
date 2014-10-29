@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/controlboard"
+        android:layout_width="@dimen/controlboard_width"
+        android:layout_height="@dimen/controlboard_height"
+    >
+
+    <GridView
+        android:id="@+id/quickswitch_panel"
+        android:layout_centerInParent="true"
+        android:layout_width="@dimen/quickswitch_panel_width"
+        android:layout_height="@dimen/quickswitch_panel_height"
+        android:background="@drawable/quickswitch_panel_background_drawable"
+        android:numColumns="3" >
+    </GridView>
+
+    <SeekBar
+        android:id="@+id/brightnessbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" />
+
+</RelativeLayout>
