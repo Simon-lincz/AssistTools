@@ -2,4 +2,6 @@
 <resources>
     <integer name="whitedot_alpha_normal">100</integer>
     <integer name="whitedot_alpha_pressed">200</integer>
+    <integer name="quickswitch_item_alpha_normal">255</integer>
+    <integer name="quickswitch_item_alpha_pressed">100</integer>
 </resources>

@@ -11,4 +11,6 @@
     <string name="toast_app_no_active">Didn\'t activate the app.</string>
     <string name="action_about">About</string>
     <string name="action_about_content">Support:\nshmcclmm@gmail.com</string>
+
+    <string name="qs_name_screenlock">ScreenLock</string>
 </resources>

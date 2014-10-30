@@ -5,14 +5,16 @@
         android:layout_height="@dimen/controlboard_height"
     >
 
-    <GridView
+    <com.fornut.assisttools.views.QuickSwitchPanel
         android:id="@+id/quickswitch_panel"
         android:layout_centerInParent="true"
+        android:padding="@dimen/quickswitch_panel_padding"
         android:layout_width="@dimen/quickswitch_panel_width"
+        android:stretchMode="columnWidth"
         android:layout_height="@dimen/quickswitch_panel_height"
         android:background="@drawable/quickswitch_panel_background_drawable"
         android:numColumns="3" >
-    </GridView>
+    </com.fornut.assisttools.views.QuickSwitchPanel>
 
     <SeekBar
         android:id="@+id/brightnessbar"

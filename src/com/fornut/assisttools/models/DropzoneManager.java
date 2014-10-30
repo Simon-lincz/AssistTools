@@ -1,19 +1,28 @@
 package com.fornut.assisttools.models;
 
+import java.lang.ref.WeakReference;
+
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 
 import com.fornut.assisttools.R;
+import com.fornut.assisttools.views.QSScreenLock;
 import com.fornut.assisttools.views.WhiteDot;
 
 /**
@@ -35,6 +44,9 @@ public class DropzoneManager {
 	private View mControlBoard;
 	private LayoutParams mControlBoard_Params;
 
+	private boolean mAreQuickSwitchesAdded = false;
+	private GridView mQuickSwitchPanel;
+
 	private Context mContext;
 	private WindowManager mWindowManager;
 	private LayoutInflater mLayoutInflater;
@@ -46,41 +58,54 @@ public class DropzoneManager {
 	private static final int MSG_SHOW_WHITEDOT = MSG_BASE + 4;
 	private static final int MSG_HIDE_WHITEDOT = MSG_BASE + 5;
 
-	Handler mHandler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
+	MyHandler mHandler = new MyHandler(this);
+
+	static class MyHandler extends Handler {
+		WeakReference<DropzoneManager> mDropzoneManager;
+
+		MyHandler(DropzoneManager dropzoneManager) {
+			mDropzoneManager = new WeakReference<DropzoneManager>(
+					dropzoneManager);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			DropzoneManager dropzoneManager = mDropzoneManager.get();
 			switch (msg.what) {
 			case MSG_CREATE_WHITEDOT:
-				createWhiteDot(mContext);
+				dropzoneManager.createWhiteDot(dropzoneManager.mContext);
 				sendEmptyMessage(MSG_INIT);
 				break;
 			case MSG_CREATE_CONTROLBOARD:
-				createContolBoard(mContext);
+				dropzoneManager.createContolBoard(dropzoneManager.mContext);
+				dropzoneManager.initQuickSwitches();
 				sendEmptyMessage(MSG_INIT);
 				break;
 			case MSG_INIT:
-				if (!mWhiteDotIsAdded) {
+				if (!dropzoneManager.mWhiteDotIsAdded) {
 					sendEmptyMessage(MSG_CREATE_WHITEDOT);
 				}
-				if (!mControlBoardIsAdded) {
+				if (!dropzoneManager.mControlBoardIsAdded) {
 					sendEmptyMessage(MSG_CREATE_CONTROLBOARD);
 				}
-				if (mWhiteDotIsAdded && mControlBoardIsAdded) {
-					mControlBoard.setVisibility(View.GONE);
+				if (dropzoneManager.mWhiteDotIsAdded
+						&& dropzoneManager.mControlBoardIsAdded) {
+					dropzoneManager.mControlBoard.setVisibility(View.GONE);
 				}
 				break;
 			case MSG_SHOW_WHITEDOT:
-				 mWhiteDot.setVisibility(View.VISIBLE);
-				 mControlBoard.setVisibility(View.GONE);
+				dropzoneManager.mWhiteDot.setVisibility(View.VISIBLE);
+				dropzoneManager.mControlBoard.setVisibility(View.GONE);
 				break;
 			case MSG_HIDE_WHITEDOT:
-				mWhiteDot.setVisibility(View.GONE);
-				 mControlBoard.setVisibility(View.VISIBLE);
+				dropzoneManager.mWhiteDot.setVisibility(View.GONE);
+				dropzoneManager.mControlBoard.setVisibility(View.VISIBLE);
 				break;
 
 			default:
 				break;
 			}
-		};
+		}
 	};
 
 	public DropzoneManager(Context context) {
@@ -112,15 +137,17 @@ public class DropzoneManager {
 		mWhiteDot_Params.format = PixelFormat.RGBA_8888; // 设置图片格式，效果为背景透明
 
 		// 设置Window flag
-		//透传 LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE;
-		mWhiteDot_Params.flags =
-				 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+		// 透传 LayoutParams.FLAG_NOT_TOUCH_MODAL |
+		// LayoutParams.FLAG_NOT_FOCUSABLE;
+		mWhiteDot_Params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 				| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
 				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
 				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
 
-		int w = context.getResources().getDimensionPixelSize(R.dimen.whitedot_width);
-		int h = context.getResources().getDimensionPixelSize(R.dimen.whitedot_height);
+		int w = context.getResources().getDimensionPixelSize(
+				R.dimen.whitedot_width);
+		int h = context.getResources().getDimensionPixelSize(
+				R.dimen.whitedot_height);
 
 		// 设置悬浮按钮的长得宽
 		mWhiteDot_Params.width = w;
@@ -207,7 +234,9 @@ public class DropzoneManager {
 		if (mControlBoardIsAdded) {
 			return;
 		}
-		mControlBoard =  mLayoutInflater.inflate(R.layout.control_board, null);
+		mControlBoard = mLayoutInflater.inflate(R.layout.control_board, null);
+
+		mQuickSwitchPanel = (GridView) mControlBoard.findViewById(R.id.quickswitch_panel);
 
 		mControlBoard_Params = new WindowManager.LayoutParams();
 		// 设置window type
@@ -220,11 +249,12 @@ public class DropzoneManager {
 		mControlBoard_Params.format = PixelFormat.RGBA_8888; // 设置图片格式，效果为背景透明
 
 		// 设置Window flag
-		mControlBoard_Params.flags = 
-				 WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+		mControlBoard_Params.flags = WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
 
-		int w = context.getResources().getDimensionPixelSize(R.dimen.controlboard_width);
-		int h = context.getResources().getDimensionPixelSize(R.dimen.controlboard_height);
+		int w = context.getResources().getDimensionPixelSize(
+				R.dimen.controlboard_width);
+		int h = context.getResources().getDimensionPixelSize(
+				R.dimen.controlboard_height);
 
 		// 设置悬浮按钮的长得宽
 		mControlBoard_Params.width = w;
@@ -235,8 +265,9 @@ public class DropzoneManager {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
-				Log.d(TAG, "event " + event.getAction());
-				if (event.getAction() == MotionEvent.ACTION_OUTSIDE || event.getAction() == MotionEvent.ACTION_DOWN) {
+				Log.d(TAG, "onTouch event " + event.getAction());
+				if (event.getAction() == MotionEvent.ACTION_OUTSIDE
+						|| event.getAction() == MotionEvent.ACTION_DOWN) {
 					mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
 				}
 				return false;
@@ -247,7 +278,40 @@ public class DropzoneManager {
 		mControlBoardIsAdded = true;
 	}
 
+	void initQuickSwitches(){
+		mAreQuickSwitchesAdded = false;
+		mQuickSwitchPanel.setAdapter(new QuickSwitchesAdapter());
+		mAreQuickSwitchesAdded = true;
+	}
+
 	void createVolumeBar() {
 
 	}
+
+	class QuickSwitchesAdapter extends BaseAdapter{
+
+        @Override
+        public int getCount() {
+              // TODO Auto-generated method stub
+              return 9;
+        }
+
+        @Override
+        public Object getItem(int arg0) {
+              // TODO Auto-generated method stub
+              return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+              // TODO Auto-generated method stub
+              return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+              // TODO Auto-generated method stub
+              return new QSScreenLock(mContext);
+        }
+  }
 }

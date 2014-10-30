@@ -11,4 +11,6 @@
     <string name="toast_app_no_active">应用未激活</string>
     <string name="action_about">关于</string>
     <string name="action_about_content">感谢您对本应用的支持。\n如果有疑问请联系：\nshmcclmm@gmail.com</string>
+
+    <string name="qs_name_screenlock">锁屏</string>
 </resources>

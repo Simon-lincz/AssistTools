@@ -6,16 +6,22 @@
 
     <dimen name="whitedot_width">50dp</dimen>
     <dimen name="whitedot_height">50dp</dimen>
-    <dimen name="whitedot_ringRadius">18dp</dimen><!-- inner Radius -->
+    <dimen name="whitedot_ringRadius">16dp</dimen><!-- inner Radius -->
     <dimen name="whitedot_ringWidth">2dp</dimen>
     <dimen name="whitedot_xRadiusCorner">10dp</dimen>
     <dimen name="whitedot_yRadiusCorner">10dp</dimen>
 
-    <dimen name="controlboard_width">250dp</dimen>
-    <dimen name="controlboard_height">250dp</dimen>
-    <dimen name="quickswitch_panel_width">200dp</dimen>
-    <dimen name="quickswitch_panel_height">200dp</dimen>
+    <dimen name="controlboard_width">300dp</dimen>
+    <dimen name="controlboard_height">300dp</dimen>
+    <dimen name="quickswitch_panel_width">220dp</dimen>
+    <dimen name="quickswitch_panel_height">220dp</dimen>
     <dimen name="quickswitch_panel_RadiusCorner">30dp</dimen>
+    <dimen name="quickswitch_panel_padding">5dp</dimen>
+    <dimen name="quickswitch_item_width">70dp</dimen>
+    <dimen name="quickswitch_item_height">70dp</dimen>
+    <dimen name="quickswitch_item_titlesize">12sp</dimen>
+    <dimen name="quickswitch_item_titlepadding">2dp</dimen>
+    <dimen name="quickswitch_item_icon_title_gap">2dp</dimen>
 
     <dimen name="background_FrameStrokeWidth">1dp</dimen>
 
