@@ -112,15 +112,12 @@ public class DropzoneManager {
 		mWhiteDot_Params.format = PixelFormat.RGBA_8888; // 设置图片格式，效果为背景透明
 
 		// 设置Window flag
-		mWhiteDot_Params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+		//透传 LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE;
+		mWhiteDot_Params.flags =
+				 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 				| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
 				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
 				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-		/*
-		 * 下面的flags属性的效果形同“锁定”。 悬浮按钮不可触摸，不接受任何事件,同时不影响后面的事件响应。
-		 * wmParams.flags=LayoutParams.FLAG_NOT_TOUCH_MODAL |
-		 * LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_NOT_TOUCHABLE;
-		 */
 
 		int w = context.getResources().getDimensionPixelSize(R.dimen.whitedot_width);
 		int h = context.getResources().getDimensionPixelSize(R.dimen.whitedot_height);
@@ -223,15 +220,8 @@ public class DropzoneManager {
 		mControlBoard_Params.format = PixelFormat.RGBA_8888; // 设置图片格式，效果为背景透明
 
 		// 设置Window flag
-		mControlBoard_Params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-				| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-		/*
-		 * 下面的flags属性的效果形同“锁定”。 悬浮按钮不可触摸，不接受任何事件,同时不影响后面的事件响应。
-		 * wmParams.flags=LayoutParams.FLAG_NOT_TOUCH_MODAL |
-		 * LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_NOT_TOUCHABLE;
-		 */
-
-		mControlBoard_Params.flags |= WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+		mControlBoard_Params.flags = 
+				 WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
 
 		int w = context.getResources().getDimensionPixelSize(R.dimen.controlboard_width);
 		int h = context.getResources().getDimensionPixelSize(R.dimen.controlboard_height);
@@ -246,7 +236,7 @@ public class DropzoneManager {
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
 				Log.d(TAG, "event " + event.getAction());
-				if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+				if (event.getAction() == MotionEvent.ACTION_OUTSIDE || event.getAction() == MotionEvent.ACTION_DOWN) {
 					mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
 				}
 				return false;

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -30,15 +31,23 @@ public class WhiteDot extends View{
 	private int mRingRadius = 0, mRingWidth = 0;
 	private int mXRadiusCorner = 0, mYRadiusCorner = 0;
 	private int mAlphaPressed = 0, mAlphaNormal = 0;
+	private int mBackground_strokeWidth = 0;
+
+	private RectF mWhiteDotBackground_Rect;
+	private RectF mWhiteDotRing_Rect;
 
 	private Bitmap mCustomBackgroundBitmap;
 	private boolean mEnableCustomBackground = false;
+	private Rect mCustomBackgroundBitmap_Rect;
+
+	private Paint mPaint;
 
 	public WhiteDot(Context context) {
 		// TODO Auto-generated constructor stub
 		super(context);
 		mContext = context;
 		mResources = getResources();
+		mPaint = new Paint();
 
 		//裁剪中间到环形，不过有锯齿，暂时去掉
 //		mPath = new Path();
@@ -55,6 +64,12 @@ public class WhiteDot extends View{
 		mYRadiusCorner = mResources.getDimensionPixelSize(R.dimen.whitedot_yRadiusCorner);
 		mAlphaNormal = mResources.getInteger(R.integer.whitedot_alpha_normal);
 		mAlphaPressed = mResources.getInteger(R.integer.whitedot_alpha_pressed);
+		mBackground_strokeWidth = mResources.getDimensionPixelSize(R.dimen.background_FrameStrokeWidth);
+		mWhiteDotBackground_Rect = new RectF(mBackground_strokeWidth, mBackground_strokeWidth,
+				mWidth - mBackground_strokeWidth, mHeight - mBackground_strokeWidth);
+		int left = mWidth / 2 - mRingRadius - mRingWidth / 2;
+		int top = mHeight / 2 - mRingRadius - mRingWidth / 2;
+		mWhiteDotRing_Rect = new RectF(left, top, mWidth - left, mHeight - top);
 	}
 	
 	@Override
@@ -92,15 +107,20 @@ public class WhiteDot extends View{
 		// TODO Auto-generated method stub
 		Log.d(TAG, "onDraw");
 		super.onDraw(canvas);
-		Paint p = new Paint();
 
-		if (mEnableCustomBackground) {
+		mPaint.setStrokeWidth(mBackground_strokeWidth);
+		mPaint.setStyle(Paint.Style.STROKE);
+		mPaint.setColor(mResources.getColor(R.color.background_FrameStroke));
+		mPaint.setAntiAlias(true);
+		canvas.drawRoundRect(mWhiteDotBackground_Rect, mXRadiusCorner, mYRadiusCorner, mPaint);// 第二个参数是x半径，第三个参数是y半径
+
+		if (mEnableCustomBackground && mCustomBackgroundBitmap != null) {
 			if (mIsPressed) {
-				p.setAlpha(mAlphaPressed);
+				mPaint.setAlpha(mAlphaPressed);
 			} else {
-				p.setAlpha(mAlphaNormal);
+				mPaint.setAlpha(mAlphaNormal);
 			}
-			canvas.drawBitmap(mCustomBackgroundBitmap, 0, 0, p);
+			canvas.drawBitmap(mCustomBackgroundBitmap, mCustomBackgroundBitmap_Rect , mWhiteDotBackground_Rect, mPaint);
 			return;
 		}
 
@@ -116,28 +136,24 @@ public class WhiteDot extends View{
 //		canvas.clipPath(mPath,Region.Op.UNION);
 
 		// 画圆角矩形
-		p.setStyle(Paint.Style.FILL);// 充满
-		p.setColor(mResources.getColor(R.color.whitedot_background));
+		mPaint.setStyle(Paint.Style.FILL);// 充满
+		mPaint.setColor(mResources.getColor(R.color.whitedot_background));
 		if (mIsPressed) {
-			p.setAlpha(mAlphaPressed);
+			mPaint.setAlpha(mAlphaPressed);
 		} else {
-			p.setAlpha(mAlphaNormal);
+			mPaint.setAlpha(mAlphaNormal);
 		}
-		p.setAntiAlias(true);// 设置画笔的锯齿效果
-		RectF rectF = new RectF(0, 0, mWidth, mHeight);// 设置个新的长方形
-		canvas.drawRoundRect(rectF, mXRadiusCorner, mYRadiusCorner, p);// 第二个参数是x半径，第三个参数是y半径
+		mPaint.setAntiAlias(true);// 设置画笔的锯齿效果
+		canvas.drawRoundRect(mWhiteDotBackground_Rect, mXRadiusCorner, mYRadiusCorner, mPaint);// 第二个参数是x半径，第三个参数是y半径
 
 		//裁剪中间到环形，不过有锯齿，暂时去掉
 //        canvas.restore();
 
 		// 画圆圆环
-		p.setStyle(Paint.Style.STROKE);// 设置空心
-		p.setStrokeWidth(mRingWidth);
-		p.setColor(Color.argb(100, 255, 255, 255));
-		int left = mWidth / 2 - mRingRadius - mRingWidth / 2;
-		int top = mHeight / 2 - mRingRadius - mRingWidth / 2;
-		RectF oval1 = new RectF(left, top, mWidth - left, mHeight - top);
-		canvas.drawArc(oval1, 0, 360, true, p);
+		mPaint.setStyle(Paint.Style.STROKE);// 设置空心
+		mPaint.setStrokeWidth(mRingWidth);
+		mPaint.setColor(Color.argb(100, 255, 255, 255));
+		canvas.drawArc(mWhiteDotRing_Rect, 0, 360, true, mPaint);
 	}
 
 	/**
@@ -153,6 +169,8 @@ public class WhiteDot extends View{
 		mEnableCustomBackground = true;
 		//需要判断并在必要时进行裁剪
 		mCustomBackgroundBitmap = bitmap;
+		mCustomBackgroundBitmap_Rect = new Rect(0, 0, mCustomBackgroundBitmap.getWidth(),
+				mCustomBackgroundBitmap.getHeight());
 	}
 
 	@Override

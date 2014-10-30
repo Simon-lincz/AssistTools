@@ -6,4 +6,7 @@
 
     <solid android:color="@color/quickswitch_panel_background" />
 
+    <stroke android:width="@dimen/background_FrameStrokeWidth"
+        android:color="@color/background_FrameStroke"/>
+
 </shape>

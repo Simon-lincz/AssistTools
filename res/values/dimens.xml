@@ -17,4 +17,6 @@
     <dimen name="quickswitch_panel_height">200dp</dimen>
     <dimen name="quickswitch_panel_RadiusCorner">30dp</dimen>
 
+    <dimen name="background_FrameStrokeWidth">1dp</dimen>
+
 </resources>

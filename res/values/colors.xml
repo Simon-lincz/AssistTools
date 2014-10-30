@@ -2,4 +2,5 @@
 <resources>
     <color name="whitedot_background">#000000</color>
     <color name="quickswitch_panel_background">#a0000000</color>
+    <color name="background_FrameStroke">#10ffffff</color>
 </resources>
