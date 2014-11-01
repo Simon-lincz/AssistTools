@@ -42,6 +42,7 @@ public abstract class QuickSwitchBase extends Button {
 	public String mQuickSwitchName;
 
 	private String mTitle;
+	private int mCustomTitleId = -1;
 	private RectF mQuickSwitchIcon_Rect;
 	private boolean mEnableCustomIcon = false;
 	private Bitmap mCustomIconBitmap;
@@ -60,7 +61,7 @@ public abstract class QuickSwitchBase extends Button {
 	private static final int MSG_LONGCLICK_CHECK = MSG_BASE + 2;
 
 	MyHandler mHandler = new MyHandler(this);
-	
+
 	static class MyHandler extends Handler {
 		SoftReference<QuickSwitchBase> mQuickSwitchBase;
 
@@ -135,14 +136,21 @@ public abstract class QuickSwitchBase extends Button {
 		mCustomIconBitmap_Rect = new Rect(0, 0,
 				mCustomIconBitmap.getWidth(),
 				mCustomIconBitmap.getHeight());
+		invalidate();
 	}
-	
+
 	void setQuickSwitchcustomTitle(int id) {
+		mCustomTitleId = id;
 		setQuickSwitchcustomTitle(getResources().getString(id));
 	}
 
 	void setQuickSwitchcustomTitle(String title) {
+		if (title == null) {
+			mCustomTitleId = -1;
+			return;
+		}
 		mTitle = title;
+		invalidate();
 	}
 
 	@Override
@@ -247,10 +255,11 @@ public abstract class QuickSwitchBase extends Button {
 			int maxStringvisiable = (int) Math.floor((mWidth - 2 * mTitlePadding) / perCharWidth);
 			maxStringvisiable--;//for show "."
 			StringBuilder tmp = new StringBuilder();
-			tmp.append(mTitle.substring(0, maxStringvisiable - 1));
+			tmp.append(mTitle.substring(0, maxStringvisiable));
 			tmp.append(".");
-			canvas.drawText(tmp, 0, mTitle.length(),
-					mTitlePadding, mHeight - mTitleSize / 2, mPaint);
+			float tmpWidth = mPaint.measureText(tmp.toString());
+			canvas.drawText(tmp, 0, tmp.length(),
+					(mWidth - tmpWidth) / 2, mHeight - mTitleSize / 2, mPaint);
 		}
 	}
 
@@ -259,6 +268,9 @@ public abstract class QuickSwitchBase extends Button {
 		// TODO Auto-generated method stub
 		super.onConfigurationChanged(newConfig);
 		refreshLayoutParams();
+		if (mCustomTitleId != -1) {
+			setQuickSwitchcustomTitle(mCustomTitleId);
+		}
 		invalidate();
 	}
 
