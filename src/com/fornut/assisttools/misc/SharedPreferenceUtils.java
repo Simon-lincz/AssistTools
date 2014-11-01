@@ -10,12 +10,6 @@ public class SharedPreferenceUtils {
 
 	private static SharedPreferenceUtils sInstance;
 
-	public SharedPreferenceUtils(Context context) {
-		// TODO Auto-generated constructor stub
-		mSharedPreferences = context.getSharedPreferences(
-				SharedPreferences_Name, Context.MODE_PRIVATE);
-	}
-
 	static public SharedPreferenceUtils getInstance(Context context) {
 		if (sInstance == null) {
 			sInstance = new SharedPreferenceUtils(context);
@@ -23,4 +17,9 @@ public class SharedPreferenceUtils {
 		return sInstance;
 	}
 
+	public SharedPreferenceUtils(Context context) {
+		// TODO Auto-generated constructor stub
+		mSharedPreferences = context.getSharedPreferences(
+				SharedPreferences_Name, Context.MODE_PRIVATE);
+	}
 }

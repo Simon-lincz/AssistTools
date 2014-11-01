@@ -13,7 +13,7 @@ import com.fornut.assisttools.models.DevicePolicyManagerUtils;
 
 public class QSScreenLock extends QuickSwitchBase {
 
-	private String TAG = "AssistTools-QSScreenLock";
+	private String TAG = "AssistTools-"+QSScreenLock.class.getSimpleName();
 
 	public QSScreenLock(Context context) {
 		super(context);
@@ -47,19 +47,22 @@ public class QSScreenLock extends QuickSwitchBase {
 		} else {
 			paint.setAlpha(mAlphaNormal);
 		}
-        RectF oval = new RectF(w * 0.35f, h * 0.1f, w * 0.65f, h * 0.4f);
-        canvas.drawArc(oval, 180, 180, false, paint);
-
-        canvas.drawLine(w * 0.65f, h * 0.25f, w * 0.65f , h * 0.4f, paint);
-
-        RectF rect = new RectF(w * 0.25f, h * 0.4f, w * 0.75f, h * 0.85f);
-        canvas.drawRect(rect, paint);
-
-        paint.setStyle(Paint.Style.FILL);//填充
-        RectF keyHoleRing = new RectF(w * 0.45f, h * 0.5f, w * 0.55f, h * 0.6f);
-        canvas.drawArc(keyHoleRing, 0, 360, false, paint);
-
-        canvas.drawLine(w * 0.5f, h * 0.6f, w * 0.5f , h * 0.7f, paint);
+		// 锁环环形
+		RectF oval = new RectF(w * 0.35f, h * 0.2f, w * 0.65f, h * 0.5f);
+		canvas.drawArc(oval, 180, 180, false, paint);
+		// 锁环左竖线
+		canvas.drawLine(w * 0.35f, h * 0.35f, w * 0.35f, h * 0.4f, paint);
+		// 锁环右竖线
+		canvas.drawLine(w * 0.65f, h * 0.35f, w * 0.65f, h * 0.4f, paint);
+		// 锁身
+		RectF rect = new RectF(w * 0.25f, h * 0.4f, w * 0.75f, h * 0.8f);
+		canvas.drawRect(rect, paint);
+		// 钥匙孔圆圈
+		paint.setStyle(Paint.Style.FILL);// 填充
+		RectF keyHoleRing = new RectF(w * 0.45f, h * 0.5f, w * 0.55f, h * 0.6f);
+		canvas.drawArc(keyHoleRing, 0, 360, false, paint);
+		// 钥匙孔竖线
+		canvas.drawLine(w * 0.5f, h * 0.6f, w * 0.5f, h * 0.7f, paint);
 
 		canvas.restore();
 	}
@@ -77,5 +80,11 @@ public class QSScreenLock extends QuickSwitchBase {
 	public void onLongClickCallback() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean isQuickSwitchSupported() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 }

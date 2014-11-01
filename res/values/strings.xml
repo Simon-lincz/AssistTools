@@ -13,4 +13,29 @@
     <string name="action_about_content">Support:\nshmcclmm@gmail.com</string>
 
     <string name="qs_name_screenlock">ScreenLock</string>
+    <string name="qs_name_homekey">Home</string>
+    <string name="qs_name_volumeup">V +</string>
+    <string name="qs_name_volumedown">V -</string>
+
+    <string-array name="allquickswitches">
+        <item>QSScreenLock</item>
+        <item>QSHomeKey</item>
+        <item>QSEmpty</item>
+        <item>QSVolumeUp</item>
+        <item>QSVolumeDown</item>
+    </string-array>
+
+    <!-- 第一个位置一定要有View不然GridView大小会出错 -->
+    <string-array name="default_display_switchlist">
+        <item>QSVolumeDown</item>
+        <item>QSEmpty</item>
+        <item>QSVolumeUp</item>
+        <item>QSEmpty</item>
+        <item>QSEmpty</item>
+        <item>QSScreenLock</item>
+		<item>QSEmpty</item>
+        <item>QSHomeKey</item>
+        <item>QSEmpty</item>
+    </string-array>
+
 </resources>

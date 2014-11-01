@@ -275,7 +275,8 @@ public abstract class QuickSwitchBase extends Button {
 	}
 
 	/**
-	 * 自己重画ICON，必须注意要实现按下的效果
+	 * 自己重画ICON，必须注意要实现按下的效果，还有上下最好各留空20%为了美观
+	 * icon要水平居中
 	 * @param canvas
 	 * @param rectF
 	 * @param paint
@@ -285,4 +286,5 @@ public abstract class QuickSwitchBase extends Button {
 	public abstract void onClickCallback();
 	public abstract void onLongClickCallback();
 	public abstract String getQuickSwitchName();
+	public abstract boolean isQuickSwitchSupported();
 }

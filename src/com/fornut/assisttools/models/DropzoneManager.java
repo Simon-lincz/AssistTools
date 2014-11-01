@@ -1,6 +1,8 @@
 package com.fornut.assisttools.models;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -12,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
@@ -21,8 +22,9 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.BaseAdapter;
 
 import com.fornut.assisttools.R;
+import com.fornut.assisttools.misc.QuickSwitchesUtils;
 import com.fornut.assisttools.models.SpeicalKeyListener.OnSpecialKeyListener;
-import com.fornut.assisttools.views.QSScreenLock;
+import com.fornut.assisttools.views.QuickSwitchBase;
 import com.fornut.assisttools.views.QuickSwitchPanel;
 import com.fornut.assisttools.views.QuickSwitchPanel.CatchKeyListener;
 import com.fornut.assisttools.views.WhiteDot;
@@ -48,6 +50,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 
 	private boolean mAreQuickSwitchesAdded = false;
 	private QuickSwitchPanel mQuickSwitchPanel;
+	private QuickSwitchesAdapter mQuickSwitchesAdapter;
 
 	private Context mContext;
 	private WindowManager mWindowManager;
@@ -64,7 +67,6 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 	private static final int MSG_HIDE_WHITEDOT = MSG_BASE + 5;
 	private static final int MSG_SPEICALKEYLISTENER_STARTWATCH = MSG_BASE + 6;
 	private static final int MSG_SPEICALKEYLISTENER_STOPWATCH = MSG_BASE + 7;
-
 
 	MyHandler mHandler = new MyHandler(this);
 
@@ -125,8 +127,18 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 		}
 	};
 
+	private static DropzoneManager sInstance;
+
+	public static DropzoneManager getInstance(Context context) {
+		if (sInstance == null) {
+			sInstance = new DropzoneManager(context);
+		}
+		return sInstance;
+	}
+
 	public DropzoneManager(Context context) {
 		// TODO Auto-generated constructor stub
+		sInstance = this;
 		mContext = context;
 		mWindowManager = (WindowManager) context
 				.getSystemService(Context.WINDOW_SERVICE);
@@ -159,9 +171,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 		// 透传 LayoutParams.FLAG_NOT_TOUCH_MODAL |
 		// LayoutParams.FLAG_NOT_FOCUSABLE;
 		mWhiteDot_Params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-				| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
-				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+				| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
 		int w = context.getResources().getDimensionPixelSize(
 				R.dimen.whitedot_width);
@@ -289,7 +299,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 				Log.d(TAG, "onTouch event " + event.getAction());
 				if (event.getAction() == MotionEvent.ACTION_OUTSIDE
 						|| event.getAction() == MotionEvent.ACTION_DOWN) {
-					mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
+					showWhiteDot();
 				}
 				return false;
 			}
@@ -301,40 +311,66 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 
 	void initQuickSwitches(){
 		mAreQuickSwitchesAdded = false;
-		mQuickSwitchPanel.setAdapter(new QuickSwitchesAdapter());
+		HashMap<String, QuickSwitchBase> allQuickSwitches = QuickSwitchesUtils.loadAllQuickSwitches(mContext);
+		mQuickSwitchesAdapter = new QuickSwitchesAdapter(mContext,allQuickSwitches);
+		mQuickSwitchPanel.setAdapter(mQuickSwitchesAdapter);
 		mAreQuickSwitchesAdded = true;
 	}
+
+	class QuickSwitchesAdapter extends BaseAdapter{
+
+		Context mContext;
+		HashMap<String, QuickSwitchBase> mAllQuickSwitches;
+		ArrayList<String> mDisplaySwitchList;
+
+		public QuickSwitchesAdapter(Context context, HashMap<String, QuickSwitchBase> quickSwitches) {
+			// TODO Auto-generated constructor stub
+			mContext = context;
+			mAllQuickSwitches = quickSwitches;
+			mDisplaySwitchList = QuickSwitchesUtils.getDisplaySwitchList(mContext);
+		}
+
+		public void refreshDisplaySwitch() {
+			mDisplaySwitchList = QuickSwitchesUtils.getDisplaySwitchList(mContext);
+			notifyDataSetChanged();
+		}
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return mDisplaySwitchList.size();
+		}
+
+		@Override
+		public Object getItem(int arg0) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			// TODO Auto-generated method stub
+			QuickSwitchBase switchBase = mAllQuickSwitches.get(mDisplaySwitchList.get(position));
+			if (switchBase != null) {
+				return switchBase;
+			}
+			return mAllQuickSwitches.get("QSEmpty");
+		}
+   }
 
 	void createVolumeBar() {
 
 	}
 
-	class QuickSwitchesAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-              // TODO Auto-generated method stub
-              return 9;
-        }
-
-        @Override
-        public Object getItem(int arg0) {
-              // TODO Auto-generated method stub
-              return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-              // TODO Auto-generated method stub
-              return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-              // TODO Auto-generated method stub
-              return new QSScreenLock(mContext);
-        }
-  }
+	public void showWhiteDot() {
+		mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
+	}
 
 	@Override
 	public void catchKeyEvent(KeyEvent event) {
@@ -343,25 +379,25 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 		Log.d(TAG, "catchKeyEvent " + event.getKeyCode());
 		if (keycode == KeyEvent.KEYCODE_BACK 
 				|| keycode == KeyEvent.KEYCODE_MENU) {
-			mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
+			showWhiteDot();
 		}
 	}
 
 	@Override
 	public void onHomePressed() {
 		// TODO Auto-generated method stub
-		mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
+		showWhiteDot();
 	}
 
 	@Override
 	public void onToggleRecentApp() {
 		// TODO Auto-generated method stub
-		mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
+		showWhiteDot();
 	}
 
 	@Override
 	public void onHomeLongPressed() {
 		// TODO Auto-generated method stub
-		mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
+		showWhiteDot();
 	}
 }
