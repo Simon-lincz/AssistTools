@@ -19,10 +19,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 
 import com.fornut.assisttools.R;
+import com.fornut.assisttools.models.SpeicalKeyListener.OnSpecialKeyListener;
 import com.fornut.assisttools.views.QSScreenLock;
+import com.fornut.assisttools.views.QuickSwitchPanel;
+import com.fornut.assisttools.views.QuickSwitchPanel.CatchKeyListener;
 import com.fornut.assisttools.views.WhiteDot;
 
 /**
@@ -30,7 +32,7 @@ import com.fornut.assisttools.views.WhiteDot;
  *
  * @author lcz
  */
-public class DropzoneManager {
+public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 
 	private static boolean DBG = false;
 	private static String TAG = "AssistTools-DropzoneManager";
@@ -45,11 +47,14 @@ public class DropzoneManager {
 	private LayoutParams mControlBoard_Params;
 
 	private boolean mAreQuickSwitchesAdded = false;
-	private GridView mQuickSwitchPanel;
+	private QuickSwitchPanel mQuickSwitchPanel;
 
 	private Context mContext;
 	private WindowManager mWindowManager;
 	private LayoutInflater mLayoutInflater;
+
+	private SpeicalKeyListener mSpeicalKeyListener;
+	public static final int SKL_STOPWATCH_TIMEOUT = 3000;
 
 	private static final int MSG_BASE = 0;
 	private static final int MSG_CREATE_WHITEDOT = MSG_BASE + 1;
@@ -57,6 +62,9 @@ public class DropzoneManager {
 	private static final int MSG_INIT = MSG_BASE + 3;
 	private static final int MSG_SHOW_WHITEDOT = MSG_BASE + 4;
 	private static final int MSG_HIDE_WHITEDOT = MSG_BASE + 5;
+	private static final int MSG_SPEICALKEYLISTENER_STARTWATCH = MSG_BASE + 6;
+	private static final int MSG_SPEICALKEYLISTENER_STOPWATCH = MSG_BASE + 7;
+
 
 	MyHandler mHandler = new MyHandler(this);
 
@@ -94,14 +102,23 @@ public class DropzoneManager {
 				}
 				break;
 			case MSG_SHOW_WHITEDOT:
+				sendEmptyMessageDelayed(MSG_SPEICALKEYLISTENER_STOPWATCH, SKL_STOPWATCH_TIMEOUT);
 				dropzoneManager.mWhiteDot.setVisibility(View.VISIBLE);
 				dropzoneManager.mControlBoard.setVisibility(View.GONE);
 				break;
 			case MSG_HIDE_WHITEDOT:
+				sendEmptyMessage(MSG_SPEICALKEYLISTENER_STARTWATCH);
 				dropzoneManager.mWhiteDot.setVisibility(View.GONE);
 				dropzoneManager.mControlBoard.setVisibility(View.VISIBLE);
 				break;
-
+			case MSG_SPEICALKEYLISTENER_STARTWATCH:
+				removeMessages(MSG_SPEICALKEYLISTENER_STOPWATCH);
+				Log.d(TAG, "startWatch");
+				dropzoneManager.mSpeicalKeyListener.startWatch();
+				break;
+			case MSG_SPEICALKEYLISTENER_STOPWATCH:
+				dropzoneManager.mSpeicalKeyListener.stopWatch();
+				break;
 			default:
 				break;
 			}
@@ -115,6 +132,8 @@ public class DropzoneManager {
 				.getSystemService(Context.WINDOW_SERVICE);
 		mLayoutInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mSpeicalKeyListener = new SpeicalKeyListener(mContext);
+		mSpeicalKeyListener.setOnHomePressedListener(this);
 		mHandler.sendEmptyMessage(MSG_INIT);
 	}
 
@@ -236,7 +255,9 @@ public class DropzoneManager {
 		}
 		mControlBoard = mLayoutInflater.inflate(R.layout.control_board, null);
 
-		mQuickSwitchPanel = (GridView) mControlBoard.findViewById(R.id.quickswitch_panel);
+		mQuickSwitchPanel = (QuickSwitchPanel) mControlBoard.findViewById(R.id.quickswitch_panel);
+
+		mQuickSwitchPanel.setCatchKeyListener(this);
 
 		mControlBoard_Params = new WindowManager.LayoutParams();
 		// 设置window type
@@ -314,4 +335,33 @@ public class DropzoneManager {
               return new QSScreenLock(mContext);
         }
   }
+
+	@Override
+	public void catchKeyEvent(KeyEvent event) {
+		// TODO Auto-generated method stub
+		int keycode = event.getKeyCode();
+		Log.d(TAG, "catchKeyEvent " + event.getKeyCode());
+		if (keycode == KeyEvent.KEYCODE_BACK 
+				|| keycode == KeyEvent.KEYCODE_MENU) {
+			mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
+		}
+	}
+
+	@Override
+	public void onHomePressed() {
+		// TODO Auto-generated method stub
+		mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
+	}
+
+	@Override
+	public void onToggleRecentApp() {
+		// TODO Auto-generated method stub
+		mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
+	}
+
+	@Override
+	public void onHomeLongPressed() {
+		// TODO Auto-generated method stub
+		mHandler.sendEmptyMessage(MSG_SHOW_WHITEDOT);
+	}
 }
