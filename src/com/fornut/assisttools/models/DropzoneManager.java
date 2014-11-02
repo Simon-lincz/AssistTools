@@ -27,6 +27,7 @@ import com.fornut.assisttools.models.SpeicalKeyListener.OnSpecialKeyListener;
 import com.fornut.assisttools.views.QuickSwitchBase;
 import com.fornut.assisttools.views.QuickSwitchPanel;
 import com.fornut.assisttools.views.QuickSwitchPanel.CatchKeyListener;
+import com.fornut.assisttools.views.ScreenMask;
 import com.fornut.assisttools.views.WhiteDot;
 
 /**
@@ -51,6 +52,8 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 	private boolean mAreQuickSwitchesAdded = false;
 	private QuickSwitchPanel mQuickSwitchPanel;
 	private QuickSwitchesAdapter mQuickSwitchesAdapter;
+
+	private ScreenMask mScreenMask;
 
 	private Context mContext;
 	private WindowManager mWindowManager;
@@ -89,6 +92,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 			case MSG_CREATE_CONTROLBOARD:
 				dropzoneManager.createContolBoard(dropzoneManager.mContext);
 				dropzoneManager.initQuickSwitches();
+				dropzoneManager.createScreenMask(dropzoneManager.mContext);
 				sendEmptyMessage(MSG_INIT);
 				break;
 			case MSG_INIT:
@@ -158,6 +162,8 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 		}
 		mWhiteDot = new WhiteDot(context);
 		mWhiteDot_Params = new WindowManager.LayoutParams();
+//		mWhiteDot_Params = new WindowManager.LayoutParams(-1, -1,
+//				_type, _flags, _format)
 		// 设置window type
 		mWhiteDot_Params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
 		/*
@@ -363,6 +369,19 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 			return mAllQuickSwitches.get("QSEmpty");
 		}
    }
+
+	void createScreenMask(Context context) {
+		mScreenMask = new ScreenMask(context);
+		LayoutParams layoutParams = new WindowManager.LayoutParams();
+		// 设置window type
+		layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+		layoutParams.format = PixelFormat.RGBA_8888; // 设置图片格式，效果为背景透明
+		layoutParams.flags = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+		mScreenMask.setColor(150, 0, 0, 0);
+		mScreenMask.invalidate();
+		mWindowManager.addView(mScreenMask, layoutParams);
+	}
 
 	void createVolumeBar() {
 
