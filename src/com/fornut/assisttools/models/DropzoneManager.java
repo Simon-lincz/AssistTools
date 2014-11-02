@@ -24,6 +24,7 @@ import android.widget.BaseAdapter;
 import com.fornut.assisttools.R;
 import com.fornut.assisttools.misc.QuickSwitchesUtils;
 import com.fornut.assisttools.models.SpeicalKeyListener.OnSpecialKeyListener;
+import com.fornut.assisttools.views.QSNightMode;
 import com.fornut.assisttools.views.QuickSwitchBase;
 import com.fornut.assisttools.views.QuickSwitchPanel;
 import com.fornut.assisttools.views.QuickSwitchPanel.CatchKeyListener;
@@ -52,7 +53,9 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 	private boolean mAreQuickSwitchesAdded = false;
 	private QuickSwitchPanel mQuickSwitchPanel;
 	private QuickSwitchesAdapter mQuickSwitchesAdapter;
+	private HashMap<String, QuickSwitchBase> mAllQuickSwitches;
 
+	private boolean mIsScreenMaskAdded = false;
 	private ScreenMask mScreenMask;
 
 	private Context mContext;
@@ -317,8 +320,8 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 
 	void initQuickSwitches(){
 		mAreQuickSwitchesAdded = false;
-		HashMap<String, QuickSwitchBase> allQuickSwitches = QuickSwitchesUtils.loadAllQuickSwitches(mContext);
-		mQuickSwitchesAdapter = new QuickSwitchesAdapter(mContext,allQuickSwitches);
+		mAllQuickSwitches = QuickSwitchesUtils.loadAllQuickSwitches(mContext);
+		mQuickSwitchesAdapter = new QuickSwitchesAdapter(mContext,mAllQuickSwitches);
 		mQuickSwitchPanel.setAdapter(mQuickSwitchesAdapter);
 		mAreQuickSwitchesAdded = true;
 	}
@@ -371,6 +374,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
    }
 
 	void createScreenMask(Context context) {
+		mIsScreenMaskAdded = false;
 		mScreenMask = new ScreenMask(context);
 		LayoutParams layoutParams = new WindowManager.LayoutParams();
 		// 设置window type
@@ -381,6 +385,14 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 		mScreenMask.setColor(150, 0, 0, 0);
 		mScreenMask.invalidate();
 		mWindowManager.addView(mScreenMask, layoutParams);
+		mIsScreenMaskAdded = true;
+		if (mAreQuickSwitchesAdded) {
+			QSNightMode qsNightMode = (QSNightMode) mAllQuickSwitches.get(QSNightMode.class.getSimpleName());
+			if (qsNightMode != null) {
+				mScreenMask.setQSNightMode(qsNightMode);
+			}
+			mScreenMask.setVisibility(View.GONE);
+		}
 	}
 
 	void createVolumeBar() {

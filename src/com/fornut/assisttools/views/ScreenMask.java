@@ -1,5 +1,7 @@
 package com.fornut.assisttools.views;
 
+import com.fornut.assisttools.views.QSNightMode.NightModeSwitchListener;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -10,12 +12,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-public class ScreenMask extends View {
+public class ScreenMask extends View implements NightModeSwitchListener{
 
 	private WindowManager mWindowManager;
 	private int mScreenWidth = 0, mScreenHeight = 0;
 	private Paint mPaint;
 	private int mAlpha = 100, mRed = 0, mGreen = 10, mBlue = 0;
+	private QSNightMode mQsNightMode;
 
 	public ScreenMask(Context context) {
 		super(context);
@@ -32,12 +35,21 @@ public class ScreenMask extends View {
 		mScreenHeight = outSize.y;
 	}
 
+	public void setQSNightMode(QSNightMode qsNightMode) {
+		if (mQsNightMode == null) {
+			mQsNightMode = qsNightMode;
+			mQsNightMode.setNightModeSwitchListener(this);
+		}
+	}
+
 	public void setColor(int alpha, int red, int green, int blue) {
 		mAlpha = alpha;
 		mRed = red;
 		mGreen = green;
 		mBlue = blue;
-		invalidate();
+		if (getVisibility() == View.VISIBLE) {
+			invalidate();
+		}
 	}
 
 	@Override
@@ -75,5 +87,17 @@ public class ScreenMask extends View {
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
 		return super.onTouchEvent(event);
+	}
+
+	@Override
+	public void switchMode() {
+		// TODO Auto-generated method stub
+		if (getVisibility() == View.VISIBLE) {
+			setVisibility(View.GONE);
+			mQsNightMode.setNightModeEnable(false);
+		} else {
+			setVisibility(View.VISIBLE);
+			mQsNightMode.setNightModeEnable(true);
+		}
 	}
 }

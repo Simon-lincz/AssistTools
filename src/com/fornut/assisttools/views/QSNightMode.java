@@ -13,6 +13,9 @@ public class QSNightMode extends QuickSwitchBase {
 
 	private String TAG = "AssistTools-"+QSNightMode.class.getSimpleName();
 
+	private NightModeSwitchListener mListener;
+	private boolean mNightModeEnable = false;
+
 	public QSNightMode(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub
@@ -38,7 +41,6 @@ public class QSNightMode extends QuickSwitchBase {
 		paint.setAntiAlias(true);
 		paint.setStrokeWidth(4);
 		paint.setStyle(Paint.Style.STROKE);//只画边框
-		paint.setColor(Color.WHITE);
 		if (isPressed) {
 			paint.setAlpha(mAlphaPressed);
 		} else {
@@ -60,11 +62,11 @@ public class QSNightMode extends QuickSwitchBase {
 
 		drawStar(canvas, paint, w * 0.3f, h * 0.3f , w * 0.1f);
 		paint.setStrokeWidth(2);
-		drawStar(canvas, paint, w * 0.45f, h * 0.45f , w * 0.09f);
+		drawStar(canvas, paint, w * 0.55f, h * 0.4f , w * 0.09f);
 		drawStar(canvas, paint, w * 0.55f, h * 0.23f , w * 0.06f);
 		drawStar(canvas, paint, w * 0.24f, h * 0.5f , w * 0.08f);
-//		drawStar(canvas, paint, w * 0.2f, h * 0.65f , w * 0.04f);
-//		drawStar(canvas, paint, w * 0.3f, h * 0.6f , w * 0.04f);
+//		drawStar(canvas, paint, w * 0.6f, h * 0.4f , w * 0.04f);
+		drawStar(canvas, paint, w * 0.4f, h * 0.55f , w * 0.04f);
 //		drawStar(canvas, paint, w * 0.2f, h * 0.4f , w * 0.04f);
 
 		// 云线
@@ -85,6 +87,9 @@ public class QSNightMode extends QuickSwitchBase {
 	@Override
 	public void onClickCallback() {
 		// TODO Auto-generated method stub
+		if (mListener != null) {
+			mListener.switchMode();
+		}
 	}
 
 	@Override
@@ -96,5 +101,18 @@ public class QSNightMode extends QuickSwitchBase {
 	public boolean isQuickSwitchSupported() {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	public void setNightModeEnable(boolean enable) {
+		mNightModeEnable = enable;
+		invalidate();
+	}
+
+	public void setNightModeSwitchListener(NightModeSwitchListener l) {
+		mListener = l;
+	}
+
+	public interface NightModeSwitchListener {
+		public void switchMode();
 	}
 }
