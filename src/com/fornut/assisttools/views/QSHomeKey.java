@@ -77,7 +77,7 @@ public class QSHomeKey extends QuickSwitchBase {
 	@Override
 	public void onClickCallback() {
 		// TODO Auto-generated method stub
-		KeySimulator.getInstance(mContext).GoHomeLauncher();
+		KeySimulator.getInstance(mContext).goHomeLauncher();
 	}
 
 	@Override

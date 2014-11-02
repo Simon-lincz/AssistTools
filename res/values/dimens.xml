@@ -13,13 +13,13 @@
 
     <dimen name="controlboard_width">300dp</dimen>
     <dimen name="controlboard_height">300dp</dimen>
-    <dimen name="quickswitch_panel_width">220dp</dimen>
-    <dimen name="quickswitch_panel_height">220dp</dimen>
-    <dimen name="quickswitch_panel_RadiusCorner">30dp</dimen>
-    <dimen name="quickswitch_panel_padding">5dp</dimen>
-    <dimen name="quickswitch_item_width">70dp</dimen>
-    <dimen name="quickswitch_item_height">70dp</dimen>
-    <dimen name="quickswitch_item_titlesize">12sp</dimen>
+    <dimen name="quickswitch_panel_width">260dp</dimen>
+    <dimen name="quickswitch_panel_height">260dp</dimen>
+    <dimen name="quickswitch_panel_RadiusCorner">40dp</dimen>
+    <dimen name="quickswitch_panel_padding">10dp</dimen>
+    <dimen name="quickswitch_item_width">80dp</dimen>
+    <dimen name="quickswitch_item_height">80dp</dimen>
+    <dimen name="quickswitch_item_titlesize">13sp</dimen>
     <dimen name="quickswitch_item_titlepadding">2dp</dimen>
     <dimen name="quickswitch_item_icon_title_gap">2dp</dimen>
 

@@ -1,5 +1,6 @@
 package com.fornut.assisttools.models;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -35,9 +36,20 @@ public class KeySimulator {
 		mAudioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND);
 	}
 
-	public void GoHomeLauncher(){
+	public void goHomeLauncher(){
 		Intent intent = new Intent(Intent.ACTION_MAIN);
 		intent.addCategory(Intent.CATEGORY_HOME);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		mContext.startActivity(intent);
+		DropzoneManager.getInstance(mContext).showWhiteDot();
+	}
+
+	/**
+	 * In future, we will toggle the our own recent
+	 */
+	public void toggleRecents() {
+		Intent intent = new Intent("com.android.systemui.recent.action.TOGGLE_RECENTS");
+		intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.recent.RecentsActivity"));
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		mContext.startActivity(intent);
 		DropzoneManager.getInstance(mContext).showWhiteDot();

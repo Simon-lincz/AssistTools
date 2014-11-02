@@ -16,6 +16,8 @@
     <string name="qs_name_homekey">Home</string>
     <string name="qs_name_volumeup">V +</string>
     <string name="qs_name_volumedown">V -</string>
+    <string name="qs_name_recentkey">Recent</string>
+    <string name="qs_name_nightmode">NightMode</string>
 
     <string-array name="allquickswitches">
         <item>QSScreenLock</item>
@@ -23,19 +25,21 @@
         <item>QSEmpty</item>
         <item>QSVolumeUp</item>
         <item>QSVolumeDown</item>
+        <item>QSRecentKey</item>
+        <item>QSNightMode</item>
     </string-array>
 
     <!-- 第一个位置一定要有View不然GridView大小会出错 -->
     <string-array name="default_display_switchlist">
         <item>QSVolumeDown</item>
-        <item>QSEmpty</item>
+        <item>QSNightMode</item>
         <item>QSVolumeUp</item>
         <item>QSEmpty</item>
         <item>QSEmpty</item>
         <item>QSScreenLock</item>
 		<item>QSEmpty</item>
         <item>QSHomeKey</item>
-        <item>QSEmpty</item>
+        <item>QSRecentKey</item>
     </string-array>
 
 </resources>
