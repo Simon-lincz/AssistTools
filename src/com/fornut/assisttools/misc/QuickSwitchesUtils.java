@@ -16,6 +16,8 @@ public class QuickSwitchesUtils {
 	private static boolean DBG = false;
 	private static String TAG = "AssistTools-QuickSwitchesUtils";
 
+	public final static String SWITCH_SPLIT = ",";
+
 	/**
 	 * 获取所有到开关，但是这些开关都只能在一个地方显示
 	 * @param context
@@ -82,10 +84,27 @@ public class QuickSwitchesUtils {
 
 	public static ArrayList<String> getDisplaySwitchList(Context context) {
 		ArrayList<String> switchlist = new ArrayList<String>();
-		String[] default_display_switchlist = context.getResources().getStringArray(R.array.default_display_switchlist);
-		for (int index = 0;index < default_display_switchlist.length; index++) {
-			switchlist.add(default_display_switchlist[index]);
+		String switchList_Sequence = SharedPreferenceUtils.getInstance(context).getDisplaySwitchList();
+		String[] display_switchlist;
+		if (switchList_Sequence == null) {
+			display_switchlist = context.getResources().getStringArray(R.array.default_display_switchlist);
+		} else {
+			display_switchlist = switchList_Sequence.split(SWITCH_SPLIT);
+		}
+		for (int index = 0;index < display_switchlist.length; index++) {
+			switchlist.add(display_switchlist[index]);
 		}
 		return switchlist;
+	}
+
+	public static void saveDisplaySwitchList(Context context, ArrayList<String> switchNames) {
+		StringBuffer displayList = new StringBuffer();
+		for(int i = 0; i < switchNames.size(); i++) {
+			String classFullName = switchNames.get(i);
+			displayList.append(classFullName);
+			displayList.append(SWITCH_SPLIT);
+		}
+		Log.d(TAG, "displayList " + displayList.toString());
+		SharedPreferenceUtils.getInstance(context).saveDisplaySwitchList(displayList.toString());
 	}
 }

@@ -16,5 +16,5 @@
     <string name="qs_name_volumeup">音量+</string>
     <string name="qs_name_volumedown">音量-</string>
     <string name="qs_name_recentkey">最近</string>
-    <string name="qs_name_nightmode">夜间模式</string>
+    <string name="qs_name_screenmask">屏幕滤镜</string>
 </resources>

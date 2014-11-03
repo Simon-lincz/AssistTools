@@ -24,7 +24,8 @@ import android.widget.BaseAdapter;
 import com.fornut.assisttools.R;
 import com.fornut.assisttools.misc.QuickSwitchesUtils;
 import com.fornut.assisttools.models.SpeicalKeyListener.OnSpecialKeyListener;
-import com.fornut.assisttools.views.QSNightMode;
+import com.fornut.assisttools.views.QSEmpty;
+import com.fornut.assisttools.views.QSScreenMask;
 import com.fornut.assisttools.views.QuickSwitchBase;
 import com.fornut.assisttools.views.QuickSwitchPanel;
 import com.fornut.assisttools.views.QuickSwitchPanel.CatchKeyListener;
@@ -366,6 +367,12 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			QuickSwitchBase switchBase = mAllQuickSwitches.get(mDisplaySwitchList.get(position));
+			if (position == 0 && switchBase instanceof QSEmpty) {
+				//add a new empty switch for measure the gridview
+				QuickSwitchBase newQSEmpty = new QSEmpty(mContext);
+				Log.d(TAG, "");
+				return newQSEmpty;
+			}
 			if (switchBase != null) {
 				return switchBase;
 			}
@@ -387,9 +394,9 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 		mWindowManager.addView(mScreenMask, layoutParams);
 		mIsScreenMaskAdded = true;
 		if (mAreQuickSwitchesAdded) {
-			QSNightMode qsNightMode = (QSNightMode) mAllQuickSwitches.get(QSNightMode.class.getSimpleName());
-			if (qsNightMode != null) {
-				mScreenMask.setQSNightMode(qsNightMode);
+			QSScreenMask qsScreenMask = (QSScreenMask) mAllQuickSwitches.get(QSScreenMask.class.getSimpleName());
+			if (qsScreenMask != null) {
+				mScreenMask.setQSScreenMask(qsScreenMask);
 			}
 			mScreenMask.setVisibility(View.GONE);
 		}

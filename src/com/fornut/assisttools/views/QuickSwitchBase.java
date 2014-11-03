@@ -99,7 +99,7 @@ public abstract class QuickSwitchBase extends Button {
 		mContext = context;
 		mResources = getResources();
 		mPaint = new Paint();
-		mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop() / 4;
+		mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop() / 2;
 		setBackgroundDrawable(null);
 		mTitle = getResources().getString(R.string.app_name);
 		refreshLayoutParams();
