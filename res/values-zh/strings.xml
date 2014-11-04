@@ -17,4 +17,7 @@
     <string name="qs_name_volumedown">音量-</string>
     <string name="qs_name_recentkey">最近</string>
     <string name="qs_name_screenmask">屏幕滤镜</string>
+    <string name="qs_name_backkey">返回</string>
+    <string name="qs_name_menukey">菜单键</string>
+    <string name="qs_name_screenshot">截屏</string>
 </resources>

@@ -52,21 +52,21 @@ public class QSVolumeUp extends QuickSwitchBase {
 		// 磁铁竖线1
 		canvas.drawLine(w * 0.2f, h * 0.4f, w * 0.2f, h * 0.6f, paint);
 		// 磁铁竖线2
-		canvas.drawLine(w * 0.35f, h * 0.4f, w * 0.35f, h * 0.6f, paint);
+		canvas.drawLine(w * 0.3f, h * 0.4f, w * 0.3f, h * 0.6f, paint);
 		// 磁铁横线1
-		canvas.drawLine(w * 0.2f, h * 0.4f, w * 0.35f, h * 0.4f, paint);
+		canvas.drawLine(w * 0.2f, h * 0.4f, w * 0.3f, h * 0.4f, paint);
 		// 磁铁横线2
-		canvas.drawLine(w * 0.2f, h * 0.6f, w * 0.35f, h * 0.6f, paint);
+		canvas.drawLine(w * 0.2f, h * 0.6f, w * 0.3f, h * 0.6f, paint);
 		// 喇叭口上斜线
-		canvas.drawLine(w * 0.35f, h * 0.4f, w * 0.6f, h * 0.2f, paint);
+		canvas.drawLine(w * 0.3f, h * 0.4f, w * 0.55f, h * 0.2f, paint);
 		// 喇叭口下斜线
-		canvas.drawLine(w * 0.35f, h * 0.6f, w * 0.6f, h * 0.8f, paint);
+		canvas.drawLine(w * 0.3f, h * 0.6f, w * 0.55f, h * 0.8f, paint);
 		// 喇叭口竖线
-		canvas.drawLine(w * 0.6f, h * 0.2f, w * 0.6f, h * 0.8f, paint);
+		canvas.drawLine(w * 0.55f, h * 0.2f, w * 0.55f, h * 0.8f, paint);
 		// UP的横线
-		canvas.drawLine(w * 0.7f, h * 0.5f, w * 0.9f, h * 0.5f, paint);
+		canvas.drawLine(w * 0.65f, h * 0.5f, w * 0.8f, h * 0.5f, paint);
 		// UP的竖线
-		canvas.drawLine(w * 0.8f, h * 0.4f, w * 0.8f, h * 0.6f, paint);
+		canvas.drawLine(w * 0.725f, h * 0.425f, w * 0.725f, h * 0.575f, paint);
 
 		canvas.restore();
 	}

@@ -54,4 +54,12 @@ public class KeySimulator {
 		mContext.startActivity(intent);
 		DropzoneManager.getInstance(mContext).showWhiteDot();
 	}
+
+	public void goBack() {
+		DropzoneManager.getInstance(mContext).showWhiteDot();
+	}
+
+	public void showMenu() {
+		DropzoneManager.getInstance(mContext).showWhiteDot();
+	}
 }

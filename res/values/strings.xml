@@ -18,28 +18,33 @@
     <string name="qs_name_volumedown">V -</string>
     <string name="qs_name_recentkey">Recent</string>
     <string name="qs_name_screenmask">ScreenMask</string>
+    <string name="qs_name_backkey">Recent</string>
+    <string name="qs_name_menukey">Menu</string>
+    <string name="qs_name_screenshot">ScreenShot</string>
 
     <string-array name="allquickswitches">
-        <item>QSScreenLock</item>
-        <item>QSHomeKey</item>
-        <item>QSEmpty</item>
-        <item>QSVolumeUp</item>
-        <item>QSVolumeDown</item>
-        <item>QSRecentKey</item>
+        <item>QSScreenShot</item>
         <item>QSScreenMask</item>
+        <item>QSMenuKey</item>
+        <item>QSVolumeDown</item>
+        <item>QSScreenLock</item>
+        <item>QSVolumeUp</item>
+        <item>QSBackKey</item>
+        <item>QSHomeKey</item>
+        <item>QSRecentKey</item>
+        <item>QSEmpty</item>
     </string-array>
 
-    <!--  只有QSEmpty可以出现多次 -->
+    <!-- 只有QSEmpty可以出现多次 -->
     <string-array name="default_display_switchlist">
-        <item>QSEmpty</item>
+        <item>QSScreenShot</item>
         <item>QSScreenMask</item>
-        <item>QSEmpty</item>
+        <item>QSMenuKey</item>
         <item>QSVolumeDown</item>
         <item>QSScreenLock</item>
         <item>QSVolumeUp</item>
-		<item>QSEmpty</item>
+        <item>QSBackKey</item>
         <item>QSHomeKey</item>
         <item>QSRecentKey</item>
     </string-array>
-
 </resources>

@@ -44,7 +44,6 @@ public class QSRecentKey extends QuickSwitchBase {
 		} else {
 			paint.setAlpha(mAlphaNormal);
 		}
-		/*//窄版
 		// 最外面卡片底部横线
 		canvas.drawLine(w * 0.2f, h * 0.8f, w * 0.6f, h * 0.8f, paint);
 		// 最外面卡片顶部横线
@@ -53,6 +52,7 @@ public class QSRecentKey extends QuickSwitchBase {
 		canvas.drawLine(w * 0.2f, h * 0.5f, w * 0.2f, h * 0.8f, paint);
 		// 最外面卡片右竖线
 		canvas.drawLine(w * 0.6f, h * 0.5f, w * 0.6f, h * 0.8f, paint);
+
 		// 中间卡片底部横线
 		canvas.drawLine(w * 0.6f, h * 0.65f, w * 0.7f, h * 0.65f, paint);
 		// 中间卡片顶部横线
@@ -61,6 +61,7 @@ public class QSRecentKey extends QuickSwitchBase {
 		canvas.drawLine(w * 0.3f, h * 0.35f, w * 0.3f, h * 0.5f, paint);
 		// 中间卡片右竖线
 		canvas.drawLine(w * 0.7f, h * 0.35f, w * 0.7f, h * 0.65f, paint);
+
 		// 最后面卡片底部横线
 		canvas.drawLine(w * 0.7f, h * 0.5f, w * 0.8f, h * 0.5f, paint);
 		// 最后面卡片顶部横线
@@ -69,32 +70,7 @@ public class QSRecentKey extends QuickSwitchBase {
 		canvas.drawLine(w * 0.4f, h * 0.2f, w * 0.4f, h * 0.35f, paint);
 		// 最后面卡片右竖线
 		canvas.drawLine(w * 0.8f, h * 0.2f, w * 0.8f, h * 0.5f, paint);
-		/*/ //宽版
-		// 最外面卡片底部横线
-		canvas.drawLine(w * 0.15f, h * 0.8f, w * 0.55f, h * 0.8f, paint);
-		// 最外面卡片顶部横线
-		canvas.drawLine(w * 0.15f, h * 0.5f, w * 0.55f, h * 0.5f, paint);
-		// 最外面卡片左竖线
-		canvas.drawLine(w * 0.15f, h * 0.5f, w * 0.15f, h * 0.8f, paint);
-		// 最外面卡片右竖线
-		canvas.drawLine(w * 0.55f, h * 0.5f, w * 0.55f, h * 0.8f, paint);
-		// 中间卡片底部横线
-		canvas.drawLine(w * 0.55f, h * 0.65f, w * 0.7f, h * 0.65f, paint);
-		// 中间卡片顶部横线
-		canvas.drawLine(w * 0.3f, h * 0.35f, w * 0.7f, h * 0.35f, paint);
-		// 中间卡片左竖线
-		canvas.drawLine(w * 0.3f, h * 0.35f, w * 0.3f, h * 0.5f, paint);
-		// 中间卡片右竖线
-		canvas.drawLine(w * 0.7f, h * 0.35f, w * 0.7f, h * 0.65f, paint);
-		// 最后面卡片底部横线
-		canvas.drawLine(w * 0.7f, h * 0.5f, w * 0.85f, h * 0.5f, paint);
-		// 最后面卡片顶部横线
-		canvas.drawLine(w * 0.45f, h * 0.2f, w * 0.85f, h * 0.2f, paint);
-		// 最后面卡片左竖线
-		canvas.drawLine(w * 0.45f, h * 0.2f, w * 0.45f, h * 0.35f, paint);
-		// 最后面卡片右竖线
-		canvas.drawLine(w * 0.85f, h * 0.2f, w * 0.85f, h * 0.5f, paint);
-		//*/
+
 		canvas.restore();
 	}
 
