@@ -47,4 +47,8 @@
         <item>QSHomeKey</item>
         <item>QSRecentKey</item>
     </string-array>
+
+    <string name="toast_msg_no_root_permission">No root permission.</string>
+    <string name="toast_msg_fail_to_get_root">Fail to get root.</string>
+    <string name="toast_msg_succeed_to_get_root">Succeed in getting root.</string>
 </resources>

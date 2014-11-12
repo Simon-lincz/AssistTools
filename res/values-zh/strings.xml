@@ -20,4 +20,8 @@
     <string name="qs_name_backkey">返回</string>
     <string name="qs_name_menukey">菜单键</string>
     <string name="qs_name_screenshot">截屏</string>
+
+    <string name="toast_msg_no_root_permission">没有Root权限.</string>
+    <string name="toast_msg_fail_to_get_root">获取Root权限失败.</string>
+    <string name="toast_msg_succeed_to_get_root">获取Root权限成功.</string>
 </resources>

@@ -1,9 +1,15 @@
 package com.fornut.assisttools.models;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.util.Log;
+import android.view.KeyEvent;
 
 public class KeySimulator {
 
@@ -13,6 +19,9 @@ public class KeySimulator {
 	Context mContext;
 	AudioManager mAudioManager;
 	private static KeySimulator sInstance;
+	private static final String SIMULATE_KEYEVENT_CMD = "input keyevent ";
+	private static final String SIMULATE_BACKKEY_CMD = SIMULATE_KEYEVENT_CMD + KeyEvent.KEYCODE_BACK ;
+	private static final String SIMULATE_MENUKEY_CMD = SIMULATE_KEYEVENT_CMD + KeyEvent.KEYCODE_MENU ;
 
 	public static KeySimulator getInstance(Context context) {
 		if (sInstance == null) {
@@ -56,10 +65,12 @@ public class KeySimulator {
 	}
 
 	public void goBack() {
+		RootCommand.getInstance(mContext).execCommand(SIMULATE_BACKKEY_CMD);
 		DropzoneManager.getInstance(mContext).showWhiteDot();
 	}
 
 	public void showMenu() {
+		RootCommand.getInstance(mContext).execCommand(SIMULATE_MENUKEY_CMD);
 		DropzoneManager.getInstance(mContext).showWhiteDot();
 	}
 }
