@@ -1,5 +1,7 @@
 package com.fornut.assisttools.views;
 
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -42,6 +44,10 @@ public class WhiteDot extends View{
 
 	private Paint mPaint;
 
+	private ValueAnimator mMoveAnimation;
+	private int mAnimationDuration = 300;
+	private int mMoveDeltaX = 0, mMoveDeltaY = 0;
+
 	public WhiteDot(Context context) {
 		// TODO Auto-generated constructor stub
 		super(context);
@@ -51,7 +57,6 @@ public class WhiteDot extends View{
 
 		//裁剪中间到环形，不过有锯齿，暂时去掉
 //		mPath = new Path();
-
 		refreshLayoutParams();
 	}
 
@@ -64,6 +69,7 @@ public class WhiteDot extends View{
 		mYRadiusCorner = mResources.getDimensionPixelSize(R.dimen.whitedot_yRadiusCorner);
 		mAlphaNormal = mResources.getInteger(R.integer.whitedot_alpha_normal);
 		mAlphaPressed = mResources.getInteger(R.integer.whitedot_alpha_pressed);
+		mAnimationDuration = mResources.getInteger(R.integer.whitedot_animation_duration);
 		mBackground_strokeWidth = mResources.getDimensionPixelSize(R.dimen.background_FrameStrokeWidth);
 		mWhiteDotBackground_Rect = new RectF(mBackground_strokeWidth, mBackground_strokeWidth,
 				mWidth - mBackground_strokeWidth, mHeight - mBackground_strokeWidth);
@@ -76,7 +82,6 @@ public class WhiteDot extends View{
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		// TODO Auto-generated method stub
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		Log.d(TAG, "onMeasure");
 		setMeasuredDimension(MeasureSpec.makeMeasureSpec(mWidth, MeasureSpec.EXACTLY),
 				MeasureSpec.makeMeasureSpec(mHeight, MeasureSpec.EXACTLY));
 	}
@@ -107,6 +112,8 @@ public class WhiteDot extends View{
 		// TODO Auto-generated method stub
 		Log.d(TAG, "onDraw");
 		super.onDraw(canvas);
+		canvas.save();
+		canvas.translate(getTranslationX(), getTranslationY());
 
 		mPaint.setStrokeWidth(mBackground_strokeWidth);
 		mPaint.setStyle(Paint.Style.STROKE);
@@ -154,6 +161,8 @@ public class WhiteDot extends View{
 		mPaint.setStrokeWidth(mRingWidth);
 		mPaint.setColor(Color.argb(100, 255, 255, 255));
 		canvas.drawArc(mWhiteDotRing_Rect, 0, 360, true, mPaint);
+
+		canvas.restore();
 	}
 
 	/**
@@ -180,5 +189,28 @@ public class WhiteDot extends View{
 		Log.d(TAG, "onConfigurationChanged");
 		refreshLayoutParams();
 	}
-	
+
+	public void showMoveAnimation(int ox, int oy, int tx, int ty) {
+		if (mMoveAnimation == null) {
+			mMoveAnimation = ValueAnimator.ofFloat(-0.2f, 0);
+			mMoveAnimation.setDuration(mAnimationDuration);
+		}
+		mMoveDeltaX = ox - tx;
+		mMoveDeltaY = oy - ty;
+		Log.d(TAG, "showMoveAnimation " + mMoveDeltaX + " " + mMoveDeltaY);
+		if (Math.max(Math.abs(mMoveDeltaX), Math.abs(mMoveDeltaY)) < 100) {
+			return;
+		}
+		mMoveAnimation.addUpdateListener(new AnimatorUpdateListener() {
+			@Override
+			public void onAnimationUpdate(ValueAnimator animation) {
+				// TODO Auto-generated method stub
+				float f = (Float) animation.getAnimatedValue();
+				Log.d(TAG, "onAnimationUpdate " + f);
+				WhiteDot.this.setTranslationX(f * mMoveDeltaX);
+				WhiteDot.this.setTranslationY(f * mMoveDeltaY);
+			}
+		});
+		mMoveAnimation.start();
+	}
 }

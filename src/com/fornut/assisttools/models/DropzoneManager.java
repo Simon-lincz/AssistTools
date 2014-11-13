@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -42,12 +44,12 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 	private static boolean DBG = false;
 	private static String TAG = "AssistTools-DropzoneManager";
 
-	private boolean mWhiteDotIsAdded = false; // 是否已增加悬浮按钮
+	private boolean mIsWhiteDotAdded = false; // 是否已增加悬浮按钮
 	private WhiteDot mWhiteDot;
 	private LayoutParams mWhiteDot_Params;
 	private int mWhiteDotClickCounter = 0;
 
-	private boolean mControlBoardIsAdded = false;
+	private boolean mIsControlBoardAdded = false;
 	private View mControlBoard;
 	private LayoutParams mControlBoard_Params;
 
@@ -62,6 +64,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 	private Context mContext;
 	private WindowManager mWindowManager;
 	private LayoutInflater mLayoutInflater;
+	private int mScreenWidth = 0, mScreenHeight = 0;
 
 	private SpeicalKeyListener mSpeicalKeyListener;
 	public static final int SKL_STOPWATCH_TIMEOUT = 3000;
@@ -100,14 +103,14 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 				sendEmptyMessage(MSG_INIT);
 				break;
 			case MSG_INIT:
-				if (!dropzoneManager.mWhiteDotIsAdded) {
+				if (!dropzoneManager.mIsWhiteDotAdded) {
 					sendEmptyMessage(MSG_CREATE_WHITEDOT);
 				}
-				if (!dropzoneManager.mControlBoardIsAdded) {
+				if (!dropzoneManager.mIsControlBoardAdded) {
 					sendEmptyMessage(MSG_CREATE_CONTROLBOARD);
 				}
-				if (dropzoneManager.mWhiteDotIsAdded
-						&& dropzoneManager.mControlBoardIsAdded) {
+				if (dropzoneManager.mIsWhiteDotAdded
+						&& dropzoneManager.mIsControlBoardAdded) {
 					dropzoneManager.mControlBoard.setVisibility(View.GONE);
 				}
 				break;
@@ -155,13 +158,26 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 		mSpeicalKeyListener = new SpeicalKeyListener(mContext);
 		mSpeicalKeyListener.setOnHomePressedListener(this);
 		mHandler.sendEmptyMessage(MSG_INIT);
+		refreshResources();
+	}
+
+	public void onConfigurationChanged(Configuration config) {
+		refreshResources();
+	}
+
+	void refreshResources() {
+		Point outSize = new Point();
+		mWindowManager.getDefaultDisplay().getSize(outSize );
+		mScreenWidth = outSize.x;
+		mScreenHeight = outSize.y;
+		Log.d(TAG, "screen W x H: " + mScreenWidth + " x " + mScreenHeight);
 	}
 
 	/**
 	 * 创建悬浮按钮
 	 */
 	private void createWhiteDot(Context context) {
-		if (mWhiteDotIsAdded) {
+		if (mIsWhiteDotAdded) {
 			return;
 		}
 		mWhiteDot = new WhiteDot(context);
@@ -196,35 +212,26 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 
 		// 设置悬浮按钮的Touch监听
 		mWhiteDot.setOnTouchListener(new OnTouchListener() {
-			int lastX, lastY;
-			int paramX, paramY;
 
 			public boolean onTouch(View v, MotionEvent event) {
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
-					lastX = (int) event.getRawX();
-					lastY = (int) event.getRawY();
-					paramX = mWhiteDot_Params.x;
-					paramY = mWhiteDot_Params.y;
 					mWhiteDotClickCounter = 0;
 					if (DBG)
 						Log.d(TAG, "ACTION_DOWN");
 					break;
 				case MotionEvent.ACTION_MOVE:
-					int dx = (int) event.getRawX() - lastX;
-					int dy = (int) event.getRawY() - lastY;
-					mWhiteDot_Params.x = paramX + dx;
-					mWhiteDot_Params.y = paramY + dy;
-					// 更新悬浮按钮位置
-					mWindowManager
-							.updateViewLayout(mWhiteDot, mWhiteDot_Params);
+					updateWhiteDotPosition((int) event.getRawX() - mScreenWidth / 2,
+							(int) event.getRawY() - mScreenHeight / 2);
 					mWhiteDotClickCounter++;
 					if (DBG)
 						Log.d(TAG, "ACTION_MOVE");
 					break;
 				case MotionEvent.ACTION_UP:
+				case MotionEvent.ACTION_CANCEL:
 					if (DBG)
 						Log.d(TAG, "ACTION_UP");
+					autoMoveWhiteDot( (int) event.getRawX(),  (int) event.getRawY());
 					break;
 				}
 				return false;// true 其他的动作都捕捉不到，比如Click，longClick等等
@@ -260,9 +267,47 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 				return false;
 			}
 		});
-
 		mWindowManager.addView(mWhiteDot, mWhiteDot_Params);
-		mWhiteDotIsAdded = true;
+		mIsWhiteDotAdded = true;
+	}
+
+	/**
+	 *  更新悬浮按钮位置
+	 * @param x
+	 * @param y
+	 */
+	void updateWhiteDotPosition(int x, int y) {
+		if (mIsWhiteDotAdded) {
+			mWhiteDot_Params.x = x;
+			mWhiteDot_Params.y = y;
+			Log.d(TAG, "updateWhiteDotPosition x " + x + " y " + y );
+			mWindowManager.updateViewLayout(mWhiteDot, mWhiteDot_Params);
+		}
+	}
+
+	void autoMoveWhiteDot(int x, int y) {
+		int delta_x = Math.min(Math.abs(x - mScreenWidth), x);
+		int delta_y = Math.min(Math.abs(y - mScreenHeight), y);
+		int targetX = 0, targetY = 0;
+		if (delta_x <= delta_y) {
+			targetY = y - mScreenHeight / 2;// whitedot's origin position is in center of screen
+			if (x <= mScreenWidth / 2) {
+				targetX = -1 * mScreenWidth / 2;
+			} else {
+				targetX = mScreenWidth / 2;
+			}
+		} else {
+			targetX = x - mScreenWidth / 2; // whitedot's origin position is in center of screen
+			if (y <= mScreenHeight / 2) {
+				targetY = -1 * mScreenHeight / 2;
+			} else {
+				targetY = mScreenHeight / 2;
+			}
+		}
+		Log.d(TAG, "autoMoveWhiteDot x " + x + " y " + y
+				+ " dx " + delta_x + " dy " + delta_y + " tx " + targetX + " ty " + targetY);
+		updateWhiteDotPosition(targetX, targetY);
+		mWhiteDot.showMoveAnimation(x - mScreenWidth / 2, y - mScreenHeight / 2, targetX, targetY);
 	}
 
 	/**
@@ -270,7 +315,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 	 */
 	private void createContolBoard(Context context) {
 
-		if (mControlBoardIsAdded) {
+		if (mIsControlBoardAdded) {
 			return;
 		}
 		mControlBoard = mLayoutInflater.inflate(R.layout.control_board, null);
@@ -316,7 +361,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 		});
 
 		mWindowManager.addView(mControlBoard, mControlBoard_Params);
-		mControlBoardIsAdded = true;
+		mIsControlBoardAdded = true;
 	}
 
 	void initQuickSwitches(){

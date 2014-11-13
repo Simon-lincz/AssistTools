@@ -2,6 +2,7 @@ package com.fornut.assisttools.controllers;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -44,6 +45,15 @@ public class AssistToolsService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.i(TAG, "onStartCommand");
 		return START_STICKY;
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		// TODO Auto-generated method stub
+		super.onConfigurationChanged(newConfig);
+		if (mDropzoneManager != null) {
+			mDropzoneManager.onConfigurationChanged(newConfig);
+		}
 	}
 
 	@Override
