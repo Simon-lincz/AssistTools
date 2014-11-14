@@ -192,7 +192,7 @@ public class WhiteDot extends View{
 
 	public void showMoveAnimation(int ox, int oy, int tx, int ty) {
 		if (mMoveAnimation == null) {
-			mMoveAnimation = ValueAnimator.ofFloat(-0.2f, 0);
+			mMoveAnimation = ValueAnimator.ofFloat(-0.07f, 0);
 			mMoveAnimation.setDuration(mAnimationDuration);
 		}
 		mMoveDeltaX = ox - tx;

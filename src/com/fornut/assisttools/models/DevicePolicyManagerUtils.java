@@ -10,6 +10,7 @@ import com.fornut.assisttools.R;
 
 public class DevicePolicyManagerUtils {
 
+	private Context mContext;
 	private DevicePolicyManager mPolicyManager;
 	private ComponentName mComponentName;
 	private static DevicePolicyManagerUtils sInstance;
@@ -23,6 +24,7 @@ public class DevicePolicyManagerUtils {
 
 	public DevicePolicyManagerUtils(Context context) {
 		// TODO Auto-generated constructor stub
+		mContext = context;
 		mPolicyManager = (DevicePolicyManager) context
 				.getSystemService(Context.DEVICE_POLICY_SERVICE);
 		mComponentName = new ComponentName(context, AdminReceiver.class);
@@ -49,6 +51,7 @@ public class DevicePolicyManagerUtils {
 	public boolean lockScreenNow() {
 		if (checkAdminActive()) {
 			mPolicyManager.lockNow();
+			DropzoneManager.getInstance(mContext).showWhiteDot();
 			return true;
 		} else {
 			// checkAdminActive(true);

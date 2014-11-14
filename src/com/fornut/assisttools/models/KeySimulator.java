@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Build;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -57,8 +58,15 @@ public class KeySimulator {
 	 * In future, we will toggle the our own recent
 	 */
 	public void toggleRecents() {
-		Intent intent = new Intent("com.android.systemui.recent.action.TOGGLE_RECENTS");
-		intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.recent.RecentsActivity"));
+		Intent intent = new Intent();
+		Log.d(TAG, ""+ Build.VERSION.SDK_INT);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			intent.setAction("com.android.systemui.recent.action.TOGGLE_RECENTS");
+			intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.recent.RecentsActivity"));
+		} else {
+			intent.setAction("com.android.systemui.recents.action.TOGGLE_RECENTS");
+			intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.recents.RecentsActivity"));
+		}
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		mContext.startActivity(intent);
 		DropzoneManager.getInstance(mContext).showWhiteDot();

@@ -25,6 +25,7 @@ import android.widget.BaseAdapter;
 
 import com.fornut.assisttools.R;
 import com.fornut.assisttools.misc.QuickSwitchesUtils;
+import com.fornut.assisttools.misc.SharedPreferenceUtils;
 import com.fornut.assisttools.models.SpeicalKeyListener.OnSpecialKeyListener;
 import com.fornut.assisttools.views.QSEmpty;
 import com.fornut.assisttools.views.QSScreenMask;
@@ -48,6 +49,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 	private WhiteDot mWhiteDot;
 	private LayoutParams mWhiteDot_Params;
 	private int mWhiteDotClickCounter = 0;
+	public final static String POSITION_SPLIT = ",";
 
 	private boolean mIsControlBoardAdded = false;
 	private View mControlBoard;
@@ -268,7 +270,13 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 			}
 		});
 		mWindowManager.addView(mWhiteDot, mWhiteDot_Params);
+		String posi = SharedPreferenceUtils.getInstance(mContext).getWhiteDotPosition();
 		mIsWhiteDotAdded = true;
+		if (posi != null) {
+			String[] xy = posi.split(POSITION_SPLIT);
+			Log.d(TAG, "posi " + posi + " x " + xy[0] + " y " + xy[1]);
+			updateWhiteDotPosition(Integer.parseInt(xy[0]), Integer.parseInt(xy[1]));
+		}
 	}
 
 	/**
@@ -307,6 +315,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener{
 		Log.d(TAG, "autoMoveWhiteDot x " + x + " y " + y
 				+ " dx " + delta_x + " dy " + delta_y + " tx " + targetX + " ty " + targetY);
 		updateWhiteDotPosition(targetX, targetY);
+		SharedPreferenceUtils.getInstance(mContext).saveWhiteDotPosition(targetX + POSITION_SPLIT + targetY);
 		mWhiteDot.showMoveAnimation(x - mScreenWidth / 2, y - mScreenHeight / 2, targetX, targetY);
 	}
 

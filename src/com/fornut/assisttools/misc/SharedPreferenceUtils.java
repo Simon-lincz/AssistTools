@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Point;
 
 public class SharedPreferenceUtils {
 
@@ -11,6 +12,7 @@ public class SharedPreferenceUtils {
 	public static final String SHAREDPREFERENCE_NAME = "config";
 	public static final String PACKAGE_VERSION = "version_code";
 	public static final String DISPLAY_LIST = "display_switch_list";
+	public static final String WHITEDOT_LAST_POSITION = "wd_position";
 
 	private static SharedPreferenceUtils sInstance;
 
@@ -56,5 +58,15 @@ public class SharedPreferenceUtils {
 			return true;
 		}
 		return false;
+	}
+
+	public void saveWhiteDotPosition(String xy) {
+		Editor editor = mSharedPreferences.edit();
+		editor.putString(WHITEDOT_LAST_POSITION, xy);
+		editor.commit();
+	}
+
+	public String getWhiteDotPosition() {
+		return mSharedPreferences.getString(WHITEDOT_LAST_POSITION, null);
 	}
 }
