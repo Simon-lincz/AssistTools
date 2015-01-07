@@ -1,228 +1,175 @@
 package com.fornut.assisttools;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageButton;
-import android.widget.ToggleButton;
 
 import com.fornut.assisttools.controllers.AssistToolsService;
-import com.fornut.assisttools.controllers.ScreenLockWidgetProvider;
-import com.fornut.assisttools.models.DevicePolicyManagerUtils;
+import com.fornut.assisttools.controllers.CalendarFragment;
+import com.fornut.assisttools.controllers.HomeFragment;
+import com.fornut.assisttools.controllers.ProfileFragment;
+import com.fornut.assisttools.controllers.SettingsFragment;
+import com.fornut.assisttools.views.residemenu.ResideMenu;
+import com.fornut.assisttools.views.residemenu.ResideMenuItem;
 
-public class MainActivity extends Activity implements OnClickListener,
-		OnCheckedChangeListener {
+public class MainActivity extends FragmentActivity implements
+        View.OnClickListener {
 
-	static boolean DBG = false;
-	static String TAG = "AssistTools-MainActivity";
+    private ResideMenu mResideMenu;
+    private ResideMenuItem mItemHome;
+    private ResideMenuItem mItemProfile;
+    private ResideMenuItem mItemCalendar;
+    private ResideMenuItem mItemSettings;
 
-	private static final int ACTIVE_DEVICEPOLICYMANAGER_REQUESTCODE = 1;
+    private AssistToolsService mService;
+    private boolean mIsServiceConnected = false;
 
-	ImageButton imbtn_screenlock;
-	ToggleButton tb_DeviceAdminActive;
-	ToggleButton tb_PhoneCallLockActive;
+    /**
+     * Called when the activity is first created.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        setUpMenu();
+        if (savedInstanceState == null)
+            changeFragment(new HomeFragment());
 
-	private AssistToolsService mService;
-	private boolean mIsServiceConnected = false;
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+        Intent service = new Intent(this, AssistToolsService.class);
+        startService(service);
+        bindService(service, mServiceConnection, Service.START_STICKY
+                | Service.BIND_AUTO_CREATE);
+    }
 
-		init();
+    private void setUpMenu() {
 
-		Intent service = new Intent(this, AssistToolsService.class);
-		startService(service);
-		bindService(service, mServiceConnection, Service.START_STICKY | Service.BIND_AUTO_CREATE);
-	}
+        // attach to current activity;
+        mResideMenu = new ResideMenu(this);
+        // resideMenu.setBackground(R.drawable.menu_background);
+        mResideMenu.setBackground(getWallpaper());
+        mResideMenu.attachToActivity(this);
+        mResideMenu.setMenuListener(menuListener);
+        // valid scale factor is between 0.0f and 1.0f. leftmenu'width is
+        // 150dip.
+        mResideMenu.setScaleValue(0.6f);
 
-	private void init() {
-		imbtn_screenlock = (ImageButton) findViewById(R.id.screenlock_btn_id);
-		imbtn_screenlock.setOnClickListener(this);
+        // create menu items;
+        mItemHome = new ResideMenuItem(this, R.drawable.icon_home, "Home");
+        mItemProfile = new ResideMenuItem(this, R.drawable.icon_profile,
+                "Profile");
+        mItemCalendar = new ResideMenuItem(this, R.drawable.icon_calendar,
+                "Calendar");
+        mItemSettings = new ResideMenuItem(this, R.drawable.icon_settings,
+                "Settings");
 
-		tb_DeviceAdminActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_id);
-		tb_DeviceAdminActive.setOnCheckedChangeListener(this);
-		// checkAdminActive(true);
+        mItemHome.setOnClickListener(this);
+        mItemProfile.setOnClickListener(this);
+        mItemCalendar.setOnClickListener(this);
+        mItemSettings.setOnClickListener(this);
 
-		tb_PhoneCallLockActive = (ToggleButton) findViewById(R.id.screenlock_togglebtn_phone_id);
-		tb_PhoneCallLockActive.setOnCheckedChangeListener(this);
-	}
+        mResideMenu.addMenuItem(mItemHome, ResideMenu.DIRECTION_RIGHT);
+        mResideMenu.addMenuItem(mItemProfile, ResideMenu.DIRECTION_RIGHT);
+        mResideMenu.addMenuItem(mItemCalendar, ResideMenu.DIRECTION_RIGHT);
+        mResideMenu.addMenuItem(mItemSettings, ResideMenu.DIRECTION_RIGHT);
 
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-	private void setSystemUiVisibility(View rootView) {
-		rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-	}
+        // You can disable a direction by setting ->
+        // resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
 
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		refreshView(DevicePolicyManagerUtils.getInstance(this)
-				.checkAdminActive());
-		Intent intent = getIntent();
-		if (intent.getBooleanExtra(ScreenLockWidgetProvider.LOCKSCREEN_FLAG,
-				false)) {
-			DevicePolicyManagerUtils.getInstance(this).lockScreenNow();
-		}
-		super.onStart();
-	}
+        findViewById(R.id.title_bar_left_menu).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
+                    }
+                });
+        findViewById(R.id.title_bar_right_menu).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mResideMenu.openMenu(ResideMenu.DIRECTION_RIGHT);
+                    }
+                });
+    }
 
-	@Override
-	public void onCheckedChanged(CompoundButton compoundButton, boolean ischeck) {
-		// TODO Auto-generated method stub
-		switch (compoundButton.getId()) {
-		case R.id.screenlock_togglebtn_id:
-			if (ischeck) {
-				DevicePolicyManagerUtils.getInstance(this).activeManage(this,ACTIVE_DEVICEPOLICYMANAGER_REQUESTCODE);
-			} else {
-				DevicePolicyManagerUtils.getInstance(this).removeManage();
-				refreshView(false);
-			}
-			break;
-		case R.id.screenlock_togglebtn_phone_id:
-			break;
-		default:
-			break;
-		}
-	}
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return mResideMenu.dispatchTouchEvent(ev);
+    }
 
-	@Override
-	public void onClick(View arg0) {
-		// TODO Auto-generated method stub
-		switch (arg0.getId()) {
-		case R.id.screenlock_btn_id:
-			if (DevicePolicyManagerUtils.getInstance(this).checkAdminActive()) {
-				DevicePolicyManagerUtils.getInstance(this).lockScreenNow();
-			} else {
-				DevicePolicyManagerUtils.getInstance(this).activeManage(this,ACTIVE_DEVICEPOLICYMANAGER_REQUESTCODE);
-			}
+    @Override
+    public void onClick(View view) {
 
-			break;
+        if (view == mItemHome) {
+            changeFragment(new HomeFragment());
+        } else if (view == mItemProfile) {
+            changeFragment(new ProfileFragment());
+        } else if (view == mItemCalendar) {
+            changeFragment(new CalendarFragment());
+        } else if (view == mItemSettings) {
+            changeFragment(new SettingsFragment());
+        }
 
-		default:
-			break;
-		}
-	}
+        // resideMenu.closeMenu();
+    }
 
-	void refreshView(boolean working) {
-		// sw_DeviceAdminActive.setChecked(working);
-		tb_DeviceAdminActive.setChecked(working);
-		if (working) {
-			imbtn_screenlock
-					.setBackgroundResource(R.drawable.ic_lock_power_off_background);
-		} else {
-			imbtn_screenlock.setBackgroundResource(R.drawable.grayround);
-		}
-		Intent refreshwidget_intent = new Intent(
-				ScreenLockWidgetProvider.REFRESHWIDGET_ACTION);
-		refreshwidget_intent.putExtra(
-				ScreenLockWidgetProvider.REFRESHWIDGET_FLAG,
-				working ? ScreenLockWidgetProvider.WIDGET_BTN_ENABLE
-						: ScreenLockWidgetProvider.WIDGET_BTN_DISABLE);
-		sendBroadcast(refreshwidget_intent);
-	}
+    private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
+        @Override
+        public void openMenu() {
+            // Toast.makeText(mContext, "Menu is opened!",
+            // Toast.LENGTH_SHORT).show();
+        }
 
-	// ===============================================================================================
+        @Override
+        public void closeMenu() {
+            // Toast.makeText(mContext, "Menu is closed!",
+            // Toast.LENGTH_SHORT).show();
+        }
+    };
 
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		if (mIsServiceConnected) {
-			unbindService(mServiceConnection);
-			mService = null;
-			mIsServiceConnected = false;
-		}
-		super.onDestroy();
-	}
+    private void changeFragment(Fragment targetFragment) {
+        mResideMenu.clearIgnoredViewList();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment, targetFragment, "fragment")
+                .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+    }
 
-	ServiceConnection mServiceConnection = new ServiceConnection() {
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			mService = null;
-			mIsServiceConnected = false;
-		}
+    // What good method is to access resideMenu
+    public ResideMenu getResideMenu() {
+        return mResideMenu;
+    }
 
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			// 返回一个MsgService对象
-			mService = ((AssistToolsService.LocalBinder)service).getService();
-			mIsServiceConnected = true;
-		}
-	};
+    @Override
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        if (mIsServiceConnected) {
+            unbindService(mServiceConnection);
+            mService = null;
+            mIsServiceConnected = false;
+        }
+        super.onDestroy();
+    }
 
-	// ===============================================================================================
+    ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+            mIsServiceConnected = false;
+        }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		switch (requestCode) {
-		case ACTIVE_DEVICEPOLICYMANAGER_REQUESTCODE:
-			if (resultCode == RESULT_OK) {
-				refreshView(true);
-			} else {
-				refreshView(false);
-			}
-			break;
-
-		default:
-			break;
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-
-	// ===============================================================================================
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		menu.add(0, 0, 0,
-				getResources().getString(R.string.action_about_content));
-		return true;
-	}
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-		// TODO Auto-generated method stub
-		menu.add(0, 0, 0,
-				getResources().getString(R.string.action_about_content));
-		super.onCreateContextMenu(menu, v, menuInfo);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		switch (item.getItemId()) {
-		case 0:
-			AlertDialog dialog;
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(R.string.action_about_content).setCancelable(
-					true);
-			dialog = builder.create();
-			dialog.show();
-			break;
-
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // 返回一个MsgService对象
+            mService = ((AssistToolsService.LocalBinder) service).getService();
+            mIsServiceConnected = true;
+        }
+    };
 }

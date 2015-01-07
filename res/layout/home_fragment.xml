@@ -40,25 +40,4 @@
         android:text="@string/device_avtive_btn_title"
         android:textSize="15sp" />
     
-     <ToggleButton
-        android:id="@+id/screenlock_togglebtn_phone_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/screenlock_btn_id"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="53dp"
-        android:text="@string/device_avtive_btn_title"
-        android:textOff="@string/device_avtive_btn_cancel"
-        android:textOn="@string/device_avtive_btn_ok" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/screenlock_btn_id"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:text="@string/device_phoneCall_lock_btn_title"
-        android:textSize="20sp" />
-    
 </RelativeLayout>
