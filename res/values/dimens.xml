@@ -4,25 +4,44 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <!-- 小白点背景的宽高 -->
     <dimen name="whitedot_width">50dp</dimen>
     <dimen name="whitedot_height">50dp</dimen>
+    <!-- 小白点的圆环内环半径 -->
     <dimen name="whitedot_ringRadius">16dp</dimen><!-- inner Radius -->
+    <!-- 小白点的圆环宽度 -->
     <dimen name="whitedot_ringWidth">2dp</dimen>
+    <!-- 小白点背景的圆角 -->
     <dimen name="whitedot_xRadiusCorner">10dp</dimen>
     <dimen name="whitedot_yRadiusCorner">10dp</dimen>
 
+    <!-- 控制板实际背景的宽高 -->
     <dimen name="controlboard_width">300dp</dimen>
     <dimen name="controlboard_height">300dp</dimen>
+    <!-- 开关面板背景的宽高，gridview -->
     <dimen name="quickswitch_panel_width">260dp</dimen>
     <dimen name="quickswitch_panel_height">260dp</dimen>
+    <!-- 开关面板背景的圆角 -->
     <dimen name="quickswitch_panel_RadiusCorner">40dp</dimen>
+    <!-- 开关面板的padding属性 -->
     <dimen name="quickswitch_panel_padding">10dp</dimen>
+    <!-- 开关的宽高 -->
     <dimen name="quickswitch_item_width">80dp</dimen>
     <dimen name="quickswitch_item_height">80dp</dimen>
+    <!-- 开关名字的属性 -->
     <dimen name="quickswitch_item_titlesize">13sp</dimen>
     <dimen name="quickswitch_item_titlepadding">2dp</dimen>
+    <!-- 开关名字与icon的间距 -->
     <dimen name="quickswitch_item_icon_title_gap">2dp</dimen>
 
+    <!-- 开关面板背景的边框线宽度 -->
     <dimen name="background_FrameStrokeWidth">1dp</dimen>
+
+    <!-- 控制条面板背景的宽高 -->
+    <dimen name="progresspanel_width">300dp</dimen>
+    <dimen name="progresspanel_height">260dp</dimen><!-- 最大高度，因为高度是自适应的 -->
+    <!-- 单独控制条的宽高 -->
+    <dimen name="progressbar_width">300dp</dimen>
+    <dimen name="progressbar_height">60dp</dimen>
 
 </resources>

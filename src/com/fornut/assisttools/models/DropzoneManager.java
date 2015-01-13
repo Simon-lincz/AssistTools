@@ -22,11 +22,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.fornut.assisttools.R;
 import com.fornut.assisttools.misc.QuickSwitchesUtils;
 import com.fornut.assisttools.misc.SharedPreferenceUtils;
 import com.fornut.assisttools.models.SpeicalKeyListener.OnSpecialKeyListener;
+import com.fornut.assisttools.views.ProgressPanel;
 import com.fornut.assisttools.views.QSEmpty;
 import com.fornut.assisttools.views.QSScreenMask;
 import com.fornut.assisttools.views.QuickSwitchBase;
@@ -51,7 +54,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener {
     private int mWhiteDotClickCounter = 0;
     public final static String POSITION_SPLIT = ",";
 
-    private boolean mIsControlBoardAdded = false;
+    private boolean mIsControlBoardAdded = false; // 控制板
     private View mControlBoard;
     private LayoutParams mControlBoard_Params;
 
@@ -60,8 +63,11 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener {
     private QuickSwitchesAdapter mQuickSwitchesAdapter;
     private HashMap<String, QuickSwitchBase> mAllQuickSwitches;
 
-    private boolean mIsScreenMaskAdded = false;
+    private boolean mIsScreenMaskAdded = false;  // 屏幕滤镜
     private ScreenMask mScreenMask;
+
+    private boolean mIsProgressPanelAdded = false;  // 进度条控制板
+    private ProgressPanel mProgressPanel;
 
     private Context mContext;
     private WindowManager mWindowManager;
@@ -102,6 +108,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener {
                 dropzoneManager.createContolBoard(dropzoneManager.mContext);
                 dropzoneManager.initQuickSwitches();
                 dropzoneManager.createScreenMask(dropzoneManager.mContext);
+                dropzoneManager.createProgressPanel(dropzoneManager.mContext);
                 sendEmptyMessage(MSG_INIT);
                 break;
             case MSG_INIT:
@@ -472,8 +479,18 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener {
         }
     }
 
-    void createVolumeBar() {
-
+    void createProgressPanel(Context context) {
+        mIsProgressPanelAdded = false;
+        mProgressPanel = new ProgressPanel(context);
+        LayoutParams layoutParams = new WindowManager.LayoutParams();
+        // 设置window type
+        layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        layoutParams.format = PixelFormat.RGBA_8888; // 设置图片格式，效果为背景透明
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        mWindowManager.addView(mProgressPanel, layoutParams);
+        mIsProgressPanelAdded = true;
     }
 
     public void showWhiteDot() {

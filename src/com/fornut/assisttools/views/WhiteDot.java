@@ -123,6 +123,7 @@ public class WhiteDot extends View {
         canvas.save();
         canvas.translate(getTranslationX(), getTranslationY());
 
+        //透明水边框
         mPaint.setStrokeWidth(mBackground_strokeWidth);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(mResources.getColor(R.color.background_FrameStroke));
