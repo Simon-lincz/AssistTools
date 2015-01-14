@@ -8,7 +8,7 @@
     <dimen name="whitedot_width">50dp</dimen>
     <dimen name="whitedot_height">50dp</dimen>
     <!-- 小白点的圆环内环半径 -->
-    <dimen name="whitedot_ringRadius">16dp</dimen><!-- inner Radius -->
+    <dimen name="whitedot_ringRadius">16dp</dimen> <!-- inner Radius -->
     <!-- 小白点的圆环宽度 -->
     <dimen name="whitedot_ringWidth">2dp</dimen>
     <!-- 小白点背景的圆角 -->
@@ -38,10 +38,18 @@
     <dimen name="background_FrameStrokeWidth">1dp</dimen>
 
     <!-- 控制条面板背景的宽高 -->
-    <dimen name="progresspanel_width">300dp</dimen>
-    <dimen name="progresspanel_height">260dp</dimen><!-- 最大高度，因为高度是自适应的 -->
+    <dimen name="progresspanel_width">320dp</dimen>
+    <dimen name="progresspanel_height">260dp</dimen> <!-- 最大高度，因为高度是自适应的 -->
+    <!-- 控制条面板背景的圆角 -->
+    <dimen name="progresspanel_RadiusCorner">20dp</dimen>
     <!-- 单独控制条的宽高 -->
-    <dimen name="progressbar_width">300dp</dimen>
-    <dimen name="progressbar_height">60dp</dimen>
+    <dimen name="progressbar_width">320dp</dimen>
+    <dimen name="progressbar_height">40dp</dimen>
+    <!-- 单独控制条的左右padding -->
+    <dimen name="progressbar_horizontalpadding">5dp</dimen>
+    <dimen name="progressbar_title_marginleft">30dp</dimen>
+
+    <!-- 控制板实际背景同控制条面板的间距 -->
+    <dimen name="controlboard_progresspanel_gap">40dp</dimen>
 
 </resources>

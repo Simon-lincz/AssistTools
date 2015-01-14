@@ -3,4 +3,5 @@
     <color name="whitedot_background">#000000</color>
     <color name="quickswitch_panel_background">#d0000000</color>
     <color name="background_FrameStroke">#10ffffff</color>
+    <color name="progresspanel_background">#d0000000</color>
 </resources>

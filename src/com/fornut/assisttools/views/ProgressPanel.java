@@ -17,6 +17,8 @@ public class ProgressPanel extends LinearLayout {
     public ProgressPanel(Context context) {
         super(context);
         // TODO Auto-generated constructor stub
+        setOrientation(LinearLayout.VERTICAL);
+        setBackgroundResource(R.drawable.progresspanel_background_drawable);
         initProgressBars();
     }
 
@@ -68,6 +70,5 @@ public class ProgressPanel extends LinearLayout {
     protected void onDraw(Canvas canvas) {
         // TODO Auto-generated method stub
         super.onDraw(canvas);
-        canvas.drawARGB(55, 255, 155, 55);
     }
 }

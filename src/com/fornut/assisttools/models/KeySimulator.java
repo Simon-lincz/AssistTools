@@ -61,15 +61,16 @@ public class KeySimulator {
     public void toggleRecents() {
         Intent intent = new Intent();
         Log.d(TAG, "" + Build.VERSION.SDK_INT);
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-//            intent.setAction("com.android.systemui.recent.action.TOGGLE_RECENTS");
-//            intent.setComponent(new ComponentName("com.android.systemui",
-//                    "com.android.systemui.recent.RecentsActivity"));
-//        } else {
+        // Build.VERSION_CODES.LOLLIPOP = 21
+        if (Build.VERSION.SDK_INT < 21) {
+            intent.setAction("com.android.systemui.recent.action.TOGGLE_RECENTS");
+            intent.setComponent(new ComponentName("com.android.systemui",
+                    "com.android.systemui.recent.RecentsActivity"));
+        } else {
             intent.setAction("com.android.systemui.recents.action.TOGGLE_RECENTS");
             intent.setComponent(new ComponentName("com.android.systemui",
                     "com.android.systemui.recents.RecentsActivity"));
-//        }
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
         DropzoneManager.getInstance(mContext).showWhiteDot();

@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/progressbar_width"
     android:layout_height="@dimen/progressbar_height"
-    android:orientation="vertical" >
+    android:paddingLeft="@dimen/progressbar_horizontalpadding"
+    android:paddingRight="@dimen/progressbar_horizontalpadding" >
 
+    <!--
+    暂时不显示，progressbar瘦身
     <TextView
         android:id="@+id/progressbar_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/progressbar_title_media" />    -->
 
     <SeekBar
-        android:id="@+id/progressbar"
+        android:id="@+id/progressbar_seekbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true" />
 
-</LinearLayout>
+</RelativeLayout>

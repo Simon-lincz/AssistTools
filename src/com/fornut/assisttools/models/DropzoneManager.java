@@ -11,6 +11,7 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -28,6 +29,7 @@ import android.widget.LinearLayout;
 import com.fornut.assisttools.R;
 import com.fornut.assisttools.misc.QuickSwitchesUtils;
 import com.fornut.assisttools.misc.SharedPreferenceUtils;
+import com.fornut.assisttools.misc.Utils;
 import com.fornut.assisttools.models.SpeicalKeyListener.OnSpecialKeyListener;
 import com.fornut.assisttools.views.ProgressPanel;
 import com.fornut.assisttools.views.QSEmpty;
@@ -68,6 +70,7 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener {
 
     private boolean mIsProgressPanelAdded = false;  // 进度条控制板
     private ProgressPanel mProgressPanel;
+    private LayoutParams mProgressPanel_Params;
 
     private Context mContext;
     private WindowManager mWindowManager;
@@ -482,14 +485,25 @@ public class DropzoneManager implements CatchKeyListener, OnSpecialKeyListener {
     void createProgressPanel(Context context) {
         mIsProgressPanelAdded = false;
         mProgressPanel = new ProgressPanel(context);
-        LayoutParams layoutParams = new WindowManager.LayoutParams();
+        mProgressPanel_Params = new WindowManager.LayoutParams();
         // 设置window type
-        layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-        layoutParams.format = PixelFormat.RGBA_8888; // 设置图片格式，效果为背景透明
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        mWindowManager.addView(mProgressPanel, layoutParams);
+        mProgressPanel_Params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        mProgressPanel_Params.format = PixelFormat.RGBA_8888; // 设置图片格式，效果为背景透明
+        mProgressPanel_Params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        mProgressPanel_Params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        mProgressPanel_Params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        mProgressPanel_Params.gravity = Gravity.TOP;
+        mWindowManager.addView(mProgressPanel, mProgressPanel_Params);
+        // 设置progresspanel的位置
+        int controlboard_h = context.getResources().getDimensionPixelSize(
+                R.dimen.controlboard_height);
+        int h = context.getResources().getDimensionPixelSize(
+                R.dimen.progressbar_height);
+        int gap = context.getResources().getDimensionPixelSize(
+                R.dimen.controlboard_progresspanel_gap);
+        mProgressPanel_Params.y = (mScreenHeight - Utils.getStatusbarHeight(context)) / 2
+                - gap - controlboard_h / 2 - h;
+        mWindowManager.updateViewLayout(mProgressPanel, mProgressPanel_Params);
         mIsProgressPanelAdded = true;
     }
 
